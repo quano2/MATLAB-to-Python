@@ -7,6 +7,7 @@ import lex
 #Tokens
 
 tokens = (
+    'EQUALS',
     'PLUS',
     'MINUS',
     'TIMES',
@@ -31,9 +32,7 @@ tokens = (
     'RBRACKET',
     'LBRACE',
     'RBRACE',
-    'LPAREN',
-    'RPAREN',
-    'ADD'
+    'IDENTIFIER'
 )
 
 #Keywords
@@ -57,18 +56,17 @@ reserved = {
     'catch'     : 'CATCH'
 }
 
+t_EQUALS         = r'\='
 t_PLUS          = r'\+'
 t_MINUS         = r'-'
 t_TIMES         = r'\*'
 t_DIV           = r'/'
-t_LPAREN        = r'\('
-t_RPAREN        = r'\)'
-t_ADD           = r'\&'
+t_AND           = r'\&'
 t_PLUSPLUS      = r'\+\+'
 t_PLUSEQUAL     = r'\+='
 t_SUBEQUAL      = r'\-='
 t_TIMESEQUAL    = r'\*='
-t_DIVEQUAL     = r'\/='
+t_DIVEQUAL      = r'\/='
 t_EQUALTO       = r'\=='
 t_NOTEQUAL      = r'\!='
 t_LESSTHAN      = r'\<'
@@ -82,23 +80,40 @@ t_LBRACE        = r'\{'
 t_RBRACE        = r'\}'
 
 def t_NUMBER(t):
-    r'(^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)'
+    r"(0x[0-9A-Fa-f]+)|((\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?[ij]?)"
+
     t.value = float(t.value)
     return t
 
 def t_STRING(t):
-    r'^[a-zA-Z][a-zA-z0-9]*'
+    r"^[a-zA-Z][a-zA-z0-9]*"
     return t
 
 def t_TRANSPOSE(t):
-    r'\t'
+    r"[\w]+\.'"
+    return t
+
+def t_IDENTIFIER(t):
+    r"[a-zA-Z]+[a-zA-Z0-9]*"
     return t
 
 def t_error(t):
     print("Invalid character: '%s' " %t.value)
     t.lexer.skip(1)
 
+def t_comment(t):
+    r"%.*"
+    pass
 
+def t_SPACES(t):
+    r"[ |\t]"
+    pass
+
+def t_newline(t):
+    r"\n"
+    t.lexer.lineno += t.value.count('/n')
+
+lexer = lex.lex()
 
 if __name__ == '__main__':
     print(tokens)
@@ -106,7 +121,7 @@ if __name__ == '__main__':
     print(reserved.keys())
     print("There are ", len(reserved), " Keywords")
     lexer = lex.lex()
-    data = "6 + 9"
+    data = "6 + 9 \t A.' pop=5 hello 68464"
 
     lexer.input(data)
 
