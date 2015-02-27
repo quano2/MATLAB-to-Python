@@ -56,7 +56,7 @@ reserved = {
     'catch'     : 'CATCH'
 }
 
-t_EQUALS         = r'\='
+t_EQUALS        = r'\='
 t_PLUS          = r'\+'
 t_MINUS         = r'-'
 t_TIMES         = r'\*'
@@ -86,7 +86,7 @@ def t_NUMBER(t):
     return t
 
 def t_STRING(t):
-    r"^[a-zA-Z][a-zA-z0-9]*"
+    r"^[a-zA-Z][a-zA-z0-9]*"   #Add search for '
     return t
 
 def t_TRANSPOSE(t):
@@ -94,7 +94,7 @@ def t_TRANSPOSE(t):
     return t
 
 def t_IDENTIFIER(t):
-    r"[a-zA-Z]+[a-zA-Z0-9]*"
+    r"[a-zA-Z_]+[a-zA-Z0-9_]*"
     return t
 
 def t_error(t):
@@ -116,12 +116,8 @@ def t_newline(t):
 lexer = lex.lex()
 
 if __name__ == '__main__':
-    print(tokens)
-    print("There are " , len(tokens),  " Tokens")
-    print(reserved.keys())
-    print("There are ", len(reserved), " Keywords")
     lexer = lex.lex()
-    data = "6 + 9 \t A.' pop=5 hello 68464"
+    data = "5"
 
     lexer.input(data)
 

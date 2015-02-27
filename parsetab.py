@@ -5,9 +5,9 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = b'6\xa4\\2lP\xcf`|\xca\xe6\xed\xa0V\xe6\x97'
+_lr_signature = b'\xea\xb20\xa90\xa4h\xfa\xf6\xb8\x1a\x98!\xdfx\xbe'
     
-_lr_action_items = {'DIV':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,14,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'PLUSEQUAL':([9,11,12,],[-27,27,-28,]),'RBRACE':([0,],[1,]),'NUMBER':([0,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,],[9,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,]),'IDENTIFIER':([0,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,],[12,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,]),'TRANSPOSE':([0,],[2,]),'AND':([0,],[3,]),'GREATEREQUAL':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,18,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'LBRACE':([0,],[4,]),'TIMES':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,20,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'PLUS':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,22,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'SUBEQUAL':([9,11,12,],[-27,26,-28,]),'LESSEQUAL':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,17,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'LBRACKET':([0,],[7,]),'NOT':([0,],[8,]),'DIVEQUAL':([9,11,12,],[-27,24,-28,]),'TIMESEQUAL':([9,11,12,],[-27,25,-28,]),'PLUSPLUS':([9,11,12,],[-27,28,-28,]),'$end':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,0,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'NOTEQUAL':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,19,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'STRING':([0,],[6,]),'GREATERTHAN':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,15,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'LESSTHAN':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,16,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'EQUALS':([0,],[10,]),'MINUS':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,21,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),'RBRACKET':([0,],[13,]),'EQUALTO':([1,2,3,4,5,6,7,8,9,10,12,13,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,],[-23,-26,-7,-22,23,-25,-20,-19,-24,-1,-2,-21,-27,-28,-6,-17,-15,-16,-18,-14,-5,-4,-3,-13,-12,-11,-10,-9,-8,]),}
+_lr_action_items = {'LBRACE':([0,],[1,]),'TIMES':([0,],[2,]),'DIVEQUAL':([0,],[4,]),'EQUALS':([0,],[5,]),'PLUSPLUS':([0,],[6,]),'LBRACKET':([0,],[7,]),'GREATERTHAN':([0,],[8,]),'SUBEQUAL':([0,],[11,]),'DIV':([0,],[10,]),'TIMESEQUAL':([0,],[9,]),'RBRACKET':([0,],[12,]),'RBRACE':([0,],[14,]),'PLUSEQUAL':([0,],[15,]),'STRING':([0,],[3,]),'PLUS':([0,],[17,]),'LESSEQUAL':([0,],[18,]),'TRANSPOSE':([0,],[20,]),'$end':([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,],[-21,-4,-26,-11,-1,-7,-19,-16,-10,-5,-9,-20,-23,-22,-8,-6,-2,-15,0,-27,-3,-25,-17,-12,-13,-14,-18,-24,]),'EQUALTO':([0,],[24,]),'MINUS':([0,],[21,]),'IDENTIFIER':([0,],[22,]),'GREATEREQUAL':([0,],[23,]),'AND':([0,],[16,]),'NOTEQUAL':([0,],[25,]),'LESSTHAN':([0,],[26,]),'NOT':([0,],[27,]),'NUMBER':([0,],[28,]),}
 
 _lr_action = { }
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expr':([0,],[5,]),'term':([0,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,],[11,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,]),}
+_lr_goto_items = {'term':([0,],[13,]),'expr':([0,],[19,]),}
 
 _lr_goto = { }
 for _k, _v in _lr_goto_items.items():
@@ -26,32 +26,31 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> expr","S'",1,None,None,None),
-  ('expr -> EQUALS','expr',1,'p_equals','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',9),
-  ('expr -> IDENTIFIER','expr',1,'p_identifier','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',12),
-  ('expr -> expr PLUS term','expr',3,'p_plus','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',15),
-  ('expr -> expr MINUS term','expr',3,'p_minus','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',19),
-  ('expr -> expr TIMES term','expr',3,'p_times','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',23),
-  ('expr -> expr DIV term','expr',3,'p_div','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',27),
-  ('expr -> AND','expr',1,'p_and','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',31),
-  ('expr -> term PLUSPLUS term','expr',3,'p_plusplus','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',35),
-  ('expr -> term PLUSEQUAL term','expr',3,'p_pluseequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',39),
-  ('expr -> term SUBEQUAL term','expr',3,'p_subequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',43),
-  ('expr -> term TIMESEQUAL term','expr',3,'p_timesequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',47),
-  ('expr -> term DIVEQUAL term','expr',3,'p_divequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',51),
-  ('expr -> expr EQUALTO term','expr',3,'p_equalto','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',55),
-  ('expr -> expr NOTEQUAL term','expr',3,'p_notequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',59),
-  ('expr -> expr LESSTHAN term','expr',3,'p_lessthan','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',63),
-  ('expr -> expr LESSEQUAL term','expr',3,'p_lessequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',67),
-  ('expr -> expr GREATERTHAN term','expr',3,'p_greaterthan','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',71),
-  ('expr -> expr GREATEREQUAL term','expr',3,'p_greaterequal','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',75),
-  ('expr -> NOT','expr',1,'p_not','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',79),
-  ('expr -> LBRACKET','expr',1,'p_lbracket','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',83),
-  ('expr -> RBRACKET','expr',1,'p_rbracket','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',87),
-  ('expr -> LBRACE','expr',1,'p_lbrace','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',91),
-  ('expr -> RBRACE','expr',1,'p_rbrace','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',95),
-  ('expr -> NUMBER','expr',1,'p_number','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',99),
-  ('expr -> STRING','expr',1,'p_string','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',103),
-  ('expr -> TRANSPOSE','expr',1,'p_transpose','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',107),
-  ('term -> NUMBER','term',1,'p_term','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',111),
-  ('term -> IDENTIFIER','term',1,'p_term','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',112),
+  ('expr -> EQUALS','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',8),
+  ('expr -> PLUS','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',9),
+  ('expr -> MINUS','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',10),
+  ('expr -> TIMES','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',11),
+  ('expr -> DIV','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',12),
+  ('expr -> AND','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',13),
+  ('expr -> PLUSPLUS','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',14),
+  ('expr -> PLUSEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',15),
+  ('expr -> SUBEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',16),
+  ('expr -> TIMESEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',17),
+  ('expr -> DIVEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',18),
+  ('expr -> EQUALTO','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',19),
+  ('expr -> NOTEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',20),
+  ('expr -> LESSTHAN','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',21),
+  ('expr -> LESSEQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',22),
+  ('expr -> GREATERTHAN','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',23),
+  ('expr -> GREATEREQUAL','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',24),
+  ('expr -> NOT','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',25),
+  ('expr -> LBRACKET','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',26),
+  ('expr -> RBRACKET','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',27),
+  ('expr -> LBRACE','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',28),
+  ('expr -> RBRACE','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',29),
+  ('expr -> term','expr',1,'p_expr','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',30),
+  ('term -> NUMBER','term',1,'p_term','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',35),
+  ('term -> IDENTIFIER','term',1,'p_term','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',36),
+  ('term -> STRING','term',1,'p_term','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',37),
+  ('expr -> TRANSPOSE','expr',1,'p_transpose','F:/Users/Joe/PycharmProjects/MATLAB-to-Python/Parse.py',47),
 ]
