@@ -30,7 +30,8 @@ def p_expr(p):
             | term
     '''
     p[0] = p[1]
-    print ('EXPR',p[0])
+    #print ('EXPR',p[0])
+
 def p_term(p):
     ''' term : NUMBER
              | IDENTIFIER
@@ -53,7 +54,7 @@ def p_error(p):
 
 yacc.yacc()
 
-data = "5"
+data = "654"
 
 output = yacc.parse(data)
 
