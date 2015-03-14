@@ -1,71 +1,296 @@
 Created by PLY version 3.4 (http://www.dabeaz.com/ply)
 
+Unused terminals:
+
+    DIVEQUAL
+    PLUSEQUAL
+    WARNING
+    TIMES
+    LESSTHAN
+    ERROR
+    COMMENT
+    NOT
+    TIMESEQUAL
+    EQUALTO
+    LESSEQUAL
+    GREATERTHAN
+    SUBEQUAL
+    GREATEREQUAL
+
 Grammar
 
-Rule 0     S' -> expr
-Rule 1     expr -> EQUALS
-Rule 2     expr -> PLUS
-Rule 3     expr -> MINUS
-Rule 4     expr -> TIMES
-Rule 5     expr -> DIV
-Rule 6     expr -> AND
-Rule 7     expr -> PLUSPLUS
-Rule 8     expr -> PLUSEQUAL
-Rule 9     expr -> SUBEQUAL
-Rule 10    expr -> TIMESEQUAL
-Rule 11    expr -> DIVEQUAL
-Rule 12    expr -> EQUALTO
-Rule 13    expr -> NOTEQUAL
-Rule 14    expr -> LESSTHAN
-Rule 15    expr -> LESSEQUAL
-Rule 16    expr -> GREATERTHAN
-Rule 17    expr -> GREATEREQUAL
-Rule 18    expr -> NOT
-Rule 19    expr -> LBRACKET
-Rule 20    expr -> RBRACKET
-Rule 21    expr -> LBRACE
-Rule 22    expr -> RBRACE
-Rule 23    expr -> term
-Rule 24    term -> NUMBER
-Rule 25    term -> IDENTIFIER
-Rule 26    term -> STRING
-Rule 27    expr -> TRANSPOSE
-Rule 28    comment -> COMMENT
+Rule 0     S' -> top
+Rule 1     top -> <empty>
+Rule 2     top -> stmt_list
+Rule 3     top -> top func_decl stmt_list_opt
+Rule 4     top -> top func_decl end semi_opt
+Rule 5     top -> top func_decl stmt_list end semi_opt
+Rule 6     semi_opt -> <empty>
+Rule 7     semi_opt -> semi_opt SEMI
+Rule 8     semi_opt -> semi_opt COMMA
+Rule 9     stmt -> continue_stmt
+Rule 10    stmt -> break_stmt
+Rule 11    stmt -> expr_stmt
+Rule 12    stmt -> global_stmt
+Rule 13    stmt -> persistent_stmt
+Rule 14    stmt -> command
+Rule 15    stmt -> for_stmt
+Rule 16    stmt -> if_stmt
+Rule 17    stmt -> null_stmt
+Rule 18    stmt -> return_stmt
+Rule 19    stmt -> switch_stmt
+Rule 20    stmt -> try_catch
+Rule 21    stmt -> while_stmt
+Rule 22    stmt -> foo_stmt
+Rule 23    arg1 -> STRING
+Rule 24    arg1 -> NUMBER
+Rule 25    arg1 -> IDENTIFIER
+Rule 26    arg1 -> GLOBAL
+Rule 27    args -> arg1
+Rule 28    args -> args arg1
+Rule 29    command -> IDENTIFIER args SEMI
+Rule 30    global_list -> IDENTIFIER
+Rule 31    global_list -> global_list IDENTIFIER
+Rule 32    global_stmt -> GLOBAL global_list SEMI
+Rule 33    global_stmt -> GLOBAL IDENTIFIER EQUALS expr SEMI
+Rule 34    foo_stmt -> expr OROR expr SEMI
+Rule 35    persistent_stmt -> PERSISTENT global_list SEMI
+Rule 36    persistent_stmt -> PERSISTENT IDENTIFIER EQUALS expr SEMI
+Rule 37    return_stmt -> RETURN SEMI
+Rule 38    continue_stmt -> CONTINUE SEMI
+Rule 39    break_stmt -> BREAK SEMI
+Rule 40    switch_stmt -> SWITCH expr semi_opt case_list end
+Rule 41    case_list -> <empty>
+Rule 42    case_list -> CASE expr sep stmt_list_opt case_list
+Rule 43    case_list -> CASE expr error stmt_list_opt case_list
+Rule 44    case_list -> OTHERWISE stmt_list
+Rule 45    try_catch -> TRY stmt_list CATCH stmt_list end
+Rule 46    try_catch -> TRY stmt_list end
+Rule 47    null_stmt -> SEMI
+Rule 48    null_stmt -> COMMA
+Rule 49    func_decl -> FUNCTION IDENTIFIER args_opt SEMI
+Rule 50    func_decl -> FUNCTION ret EQUALS IDENTIFIER args_opt SEMI
+Rule 51    args_opt -> <empty>
+Rule 52    args_opt -> LBRACKET RBRACKET
+Rule 53    args_opt -> LBRACKET expr_list RBRACKET
+Rule 54    arg_list -> IDENTIFIER
+Rule 55    arg_list -> arg_list COMMA IDENTIFIER
+Rule 56    ret -> IDENTIFIER
+Rule 57    ret -> LBRACKET RBRACKET
+Rule 58    ret -> LBRACKET expr_list RBRACKET
+Rule 59    stmt_list_opt -> <empty>
+Rule 60    stmt_list_opt -> stmt_list
+Rule 61    stmt_list -> stmt
+Rule 62    stmt_list -> stmt_list stmt
+Rule 63    concat_list -> expr_list SEMI expr_list
+Rule 64    concat_list -> concat_list SEMI expr_list
+Rule 65    expr_list -> exprs
+Rule 66    expr_list -> exprs COMMA
+Rule 67    exprs -> expr
+Rule 68    exprs -> exprs COMMA expr
+Rule 69    expr_stmt -> expr_list SEMI
+Rule 70    while_stmt -> WHILE expr SEMI stmt_list end
+Rule 71    sep -> COMMA
+Rule 72    sep -> SEMI
+Rule 73    if_stmt -> IF expr sep stmt_list_opt elseif_stmt end
+Rule 74    if_stmt -> IF expr error stmt_list_opt elseif_stmt end
+Rule 75    elseif_stmt -> <empty>
+Rule 76    elseif_stmt -> ELSE stmt_list_opt
+Rule 77    elseif_stmt -> ELSEIF expr sep stmt_list_opt elseif_stmt
+Rule 78    for_stmt -> FOR IDENTIFIER EQUALS expr SEMI stmt_list end
+Rule 79    for_stmt -> FOR LBRACKET IDENTIFIER EQUALS expr RBRACKET SEMI stmt_list end
+Rule 80    for_stmt -> FOR matrix EQUALS expr SEMI stmt_list end
+Rule 81    expr -> IDENTIFIER
+Rule 82    expr -> end
+Rule 83    expr -> number
+Rule 84    expr -> string
+Rule 85    expr -> colon
+Rule 86    expr -> NOTEQUAL
+Rule 87    expr -> matrix
+Rule 88    expr -> cellarray
+Rule 89    expr -> expr2
+Rule 90    expr -> expr1
+Rule 91    expr -> expr PLUSPLUS
+Rule 92    expr -> expr MINUSMINUS
+Rule 93    lambda_args -> LBRACKET RBRACKET
+Rule 94    lambda_args -> LBRACKET arg_list RBRACKET
+Rule 95    number -> NUMBER
+Rule 96    end -> END
+Rule 97    string -> STRING
+Rule 98    colon -> COLON
+Rule 99    expr1 -> MINUS expr
+Rule 100   expr1 -> PLUS expr
+Rule 101   expr1 -> NOTEQUAL expr
+Rule 102   expr1 -> PLUSPLUS IDENTIFIER
+Rule 103   expr1 -> MINUSMINUS IDENTIFIER
+Rule 104   cellarray -> LBRACE RBRACE
+Rule 105   cellarray -> LBRACE expr_list RBRACE
+Rule 106   cellarray -> LBRACE concat_list RBRACE
+Rule 107   cellarray -> LBRACE concat_list SEMI RBRACE
+Rule 108   matrix -> LBRACKET RBRACKET
+Rule 109   matrix -> LBRACKET concat_list RBRACKET
+Rule 110   matrix -> LBRACKET concat_list SEMI RBRACKET
+Rule 111   matrix -> LBRACKET expr_list RBRACKET
+Rule 112   matrix -> LBRACKET expr_list SEMI RBRACKET
+Rule 113   expr -> LBRACKET expr RBRACKET
+Rule 114   expr -> expr FIELD
+Rule 115   expr -> expr TRANSPOSE
+Rule 116   expr -> expr LBRACE expr_list RBRACE
+Rule 117   expr -> expr LBRACE RBRACE
+Rule 118   expr -> expr LBRACKET expr_list RBRACKET
+Rule 119   expr -> expr LBRACKET RBRACKET
+Rule 120   expr2 -> expr AND expr
+Rule 121   expr2 -> expr BACKSLASH expr
+Rule 122   expr2 -> expr COLON expr
+Rule 123   expr2 -> expr DIV expr
+Rule 124   expr2 -> expr DOT expr
+Rule 125   expr2 -> expr DOTDIV expr
+Rule 126   expr2 -> expr DOTDIVEQUALS expr
+Rule 127   expr2 -> expr DOTEXP expr
+Rule 128   expr2 -> expr DOTMUL expr
+Rule 129   expr2 -> expr DOTMULEQUALS expr
+Rule 130   expr2 -> expr EQUALSEQUALS expr
+Rule 131   expr2 -> expr EXP expr
+Rule 132   expr2 -> expr EXPEQUALS expr
+Rule 133   expr2 -> expr GE expr
+Rule 134   expr2 -> expr GT expr
+Rule 135   expr2 -> expr LE expr
+Rule 136   expr2 -> expr LT expr
+Rule 137   expr2 -> expr MINUS expr
+Rule 138   expr2 -> expr MUL expr
+Rule 139   expr2 -> expr NE expr
+Rule 140   expr2 -> expr OR expr
+Rule 141   expr2 -> expr OROR expr
+Rule 142   expr2 -> expr PLUS expr
+Rule 143   expr2 -> expr EQUALS expr
+Rule 144   expr2 -> expr MULEQUALS expr
+Rule 145   expr2 -> expr DIVEQUALS expr
+Rule 146   expr2 -> expr MINUSEQUALS expr
+Rule 147   expr2 -> expr PLUSEQUALS expr
+Rule 148   expr2 -> expr OREQUALS expr
+Rule 149   expr2 -> expr ANDEQUALS expr
 
 Terminals, with rules where they appear
 
-AND                  : 6
-DIV                  : 5
-DIVEQUAL             : 11
-EQUALS               : 1
-EQUALTO              : 12
-GREATEREQUAL         : 17
-GREATERTHAN          : 16
-IDENTIFIER           : 25
-LBRACE               : 21
-LBRACKET             : 19
-LESSEQUAL            : 15
-LESSTHAN             : 14
-MINUS                : 3
-NOT                  : 18
-NOTEQUAL             : 13
-NUMBER               : 24
-PLUS                 : 2
-PLUSEQUAL            : 8
-PLUSPLUS             : 7
-RBRACE               : 22
-RBRACKET             : 20
-STRING               : 26
-SUBEQUAL             : 9
-TIMES                : 4
-TIMESEQUAL           : 10
-TRANSPOSE            : 27
-error                : 
+AND                  : 120
+BREAK                : 39
+CASE                 : 42 43
+CATCH                : 45
+COLON                : 98 122
+COMMA                : 8 48 55 66 68 71
+COMMENT              : 
+CONTINUE             : 38
+DIV                  : 123
+DIVEQUAL             : 
+ELSE                 : 76
+ELSEIF               : 77
+END                  : 96
+EQUALS               : 33 36 50 78 79 80 143
+EQUALTO              : 
+ERROR                : 
+FIELD                : 114
+FOR                  : 78 79 80
+FUNCTION             : 49 50
+GLOBAL               : 26 32 33
+GREATEREQUAL         : 
+GREATERTHAN          : 
+IDENTIFIER           : 25 29 30 31 33 36 49 50 54 55 56 78 79 81 102 103
+IF                   : 73 74
+LBRACE               : 104 105 106 107 116 117
+LBRACKET             : 52 53 57 58 79 93 94 108 109 110 111 112 113 118 119
+LESSEQUAL            : 
+LESSTHAN             : 
+MINUS                : 99 137
+MINUSMINUS           : 92 103
+NOT                  : 
+NOTEQUAL             : 86 101
+NUMBER               : 24 95
+OR                   : 140
+OREQUALS             : 148
+OROR                 : 34 141
+OTHERWISE            : 44
+PERSISTENT           : 35 36
+PLUS                 : 100 142
+PLUSEQUAL            : 
+PLUSPLUS             : 91 102
+RBRACE               : 104 105 106 107 116 117
+RBRACKET             : 52 53 57 58 79 93 94 108 109 110 111 112 113 118 119
+RETURN               : 37
+SEMI                 : 7 29 32 33 34 35 36 37 38 39 47 49 50 63 64 69 70 72 78 79 80 107 110 112
+STRING               : 23 97
+SUBEQUAL             : 
+SWITCH               : 40
+TIMES                : 
+TIMESEQUAL           : 
+TRANSPOSE            : 115
+TRY                  : 45 46
+WARNING              : 
+WHILE                : 70
+error                : 43 74
 
 Nonterminals, with rules where they appear
 
-COMMENT              : 28
-comment              : 
-expr                 : 0
-term                 : 23
+ANDEQUALS            : 149
+BACKSLASH            : 121
+DIVEQUALS            : 145
+DOT                  : 124
+DOTDIV               : 125
+DOTDIVEQUALS         : 126
+DOTEXP               : 127
+DOTMUL               : 128
+DOTMULEQUALS         : 129
+EQUALSEQUALS         : 130
+EXP                  : 131
+EXPEQUALS            : 132
+GE                   : 133
+GT                   : 134
+LE                   : 135
+LT                   : 136
+MINUSEQUALS          : 146
+MUL                  : 138
+MULEQUALS            : 144
+NE                   : 139
+PLUSEQUALS           : 147
+arg1                 : 27 28
+arg_list             : 55 94
+args                 : 28 29
+args_opt             : 49 50
+break_stmt           : 10
+case_list            : 40 42 43
+cellarray            : 88
+colon                : 85
+command              : 14
+concat_list          : 64 106 107 109 110
+continue_stmt        : 9
+elseif_stmt          : 73 74 77
+end                  : 4 5 40 45 46 70 73 74 78 79 80 82
+expr                 : 33 34 34 36 40 42 43 67 68 70 73 74 77 78 79 80 91 92 99 100 101 113 114 115 116 117 118 119 120 120 121 121 122 122 123 123 124 124 125 125 126 126 127 127 128 128 129 129 130 130 131 131 132 132 133 133 134 134 135 135 136 136 137 137 138 138 139 139 140 140 141 141 142 142 143 143 144 144 145 145 146 146 147 147 148 148 149 149
+expr1                : 90
+expr2                : 89
+expr_list            : 53 58 63 63 64 69 105 111 112 116 118
+expr_stmt            : 11
+exprs                : 65 66 68
+foo_stmt             : 22
+for_stmt             : 15
+func_decl            : 3 4 5
+global_list          : 31 32 35
+global_stmt          : 12
+if_stmt              : 16
+lambda_args          : 
+matrix               : 80 87
+null_stmt            : 17
+number               : 83
+persistent_stmt      : 13
+ret                  : 50
+return_stmt          : 18
+semi_opt             : 4 5 7 8 40
+sep                  : 42 73 77
+stmt                 : 61 62
+stmt_list            : 2 5 44 45 45 46 60 62 70 78 79 80
+stmt_list_opt        : 3 42 43 73 74 76 77
+string               : 84
+switch_stmt          : 19
+top                  : 3 4 5 0
+try_catch            : 20
+while_stmt           : 21
 
