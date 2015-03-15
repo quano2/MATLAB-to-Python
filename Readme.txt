@@ -12,7 +12,20 @@ ADDED:
 
 TOKENS NOT NEEDED:
 - PLUSPLUS + similar
+- PLUSEQUALS + similar removed
 
+PARSE TERMS REMOVED (NOT FULL LIST):
+- Lambda_args
+- Lambda_expr
 
 PROBLEMS NOTICED:
 - Left and Right divide
+- Array left and right division
+
+NOTES:
+- Dotdivequals and Dotmulequals have been removed not sure what they do
+- Lots more equals removed
+
+TO DO LIST:
+- Check tokens for excess
+- Check grammar

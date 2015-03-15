@@ -7,9 +7,9 @@ precedence = (
     ("left", "PLUS", "MINUS"),
     ("left", "TIMES","DIV"),
     ("right","TRANSPOSE"),
-    ("left","PLUSPLUS","MINUSMINUS"),
     ("right","UMINUS")
 )
+
 
 def p_top(p):
     """
@@ -54,6 +54,7 @@ def p_arg1(p):
             | IDENTIFIER
             | GLOBAL
     """
+    p[0] = (p[1].type, p[1].value)
 
 def p_args(p):
     """
@@ -213,7 +214,6 @@ def p_for_stmt(p):
 
 def p_expr(p):
     """expr : IDENTIFIER
-            | end
             | number
             | string
             | colon
@@ -222,18 +222,12 @@ def p_expr(p):
             | cellarray
             | expr2
             | expr1
-            | expr PLUSPLUS
-            | expr MINUSMINUS
-    """
-
-
-def p_lambda_args(p):
-    """lambda_args  : LBRACKET RBRACKET
-                    | LBRACKET arg_list RBRACKET
     """
 
 def p_expr_number(p):
     "number : NUMBER"
+    print("oh look a number")
+    print (p[1].value)
 
 def p_expr_end(p):
     "end : END"
@@ -248,8 +242,6 @@ def p_expr1(p):
     """expr1    : MINUS expr %prec UMINUS
                 | PLUS expr %prec UMINUS
                 | NOTEQUAL expr
-                | PLUSPLUS IDENTIFIER
-                | MINUSMINUS IDENTIFIER
     """
 
 def p_cellarray(p):
@@ -299,30 +291,22 @@ def p_expr2(p):
                 | expr DIV expr
                 | expr DOT expr
                 | expr DOTDIV expr
-                | expr DOTDIVEQUALS expr
                 | expr DOTEXP expr
                 | expr DOTMUL expr
-                | expr DOTMULEQUALS expr
-                | expr EQUALSEQUALS expr
+                | expr EQUALEQUAL expr
                 | expr EXP expr
-                | expr EXPEQUALS expr
-                | expr GE expr
-                | expr GT expr
-                | expr LE expr
-                | expr LT expr
+                | expr GREATEREQUAL expr
+                | expr GREATERTHAN expr
+                | expr LESSEQUAL expr
+                | expr LESSTHAN expr
                 | expr MINUS expr
-                | expr MUL expr
-                | expr NE expr
+                | expr TIMES expr
+                | expr NOTEQUAL expr
                 | expr OR expr
                 | expr OROR expr
                 | expr PLUS expr
                 | expr EQUALS expr
-                | expr MULEQUALS expr
-                | expr DIVEQUALS expr
-                | expr MINUSEQUALS expr
-                | expr PLUSEQUALS expr
                 | expr OREQUALS expr
-                | expr ANDEQUALS expr
     """
 # The algorithm, which decides if an
 # expression F(X)
@@ -344,8 +328,12 @@ def p_error(p):
 
 yacc.yacc()
 
-data = "i * 5 *4"
+data = """
+        %hello
+        
+        """
 
 output = yacc.parse(data)
 
 print (output)
+print (Lexer.comments)

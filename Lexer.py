@@ -4,6 +4,8 @@
 __author__ = 'Joe'
 import lex
 
+comments = []
+
 #Tokens
 
 tokens = [
@@ -14,19 +16,12 @@ tokens = [
     'DIV',
     'LDIV',
     'AND',
-    'PLUSPLUS',
-    'MINUSMINUS',
-    'PLUSEQUAL',
-    'SUBEQUAL',
-    'TIMESEQUAL',
-    'DIVEQUAL',
-    'EQUALTO',
+    'EQUALEQUAL',
     'NOTEQUAL',
     'LESSTHAN',
     'LESSEQUAL',
     'GREATERTHAN',
     'GREATEREQUAL',
-    'NOT',
     'NUMBER',
     'STRING',
     'TRANSPOSE',
@@ -42,7 +37,12 @@ tokens = [
     'FIELD',
     'OR',
     'OREQUALS',
-    'OROR'
+    'OROR',
+    'DOT',
+    'DOTDIV',
+    'DOTEXP',
+    'DOTMUL',
+    'EXP'
 
 ]
 
@@ -54,13 +54,11 @@ reserved = {
     'else'      : 'ELSE',
     'elseif'    : 'ELSEIF',
     'end'       : 'END',
-    'error'     : 'ERROR',
     'for'       : 'FOR',
     'if'        : 'IF',
     'otherwise' : 'OTHERWISE',
     'return'    : 'RETURN',
     'switch'    : 'SWITCH',
-    'warning'   : 'WARNING',
     'while'     : 'WHILE',
     'continue'  : 'CONTINUE',
     'try'       : 'TRY',
@@ -78,19 +76,12 @@ t_TIMES         = r'\*'
 t_DIV           = r'/'
 t_LDIV          = r'\\'
 t_AND           = r'\&'
-t_PLUSPLUS      = r'\+\+'
-t_MINUSMINUS    = r'\-\-'
-t_PLUSEQUAL     = r'\+='
-t_SUBEQUAL      = r'\-='
-t_TIMESEQUAL    = r'\*='
-t_DIVEQUAL      = r'\/='
-t_EQUALTO       = r'\=='
+t_EQUALEQUAL    = r'\=='
 t_NOTEQUAL      = r'\~='
 t_LESSTHAN      = r'\<'
 t_LESSEQUAL     = r'\<='
 t_GREATERTHAN   = r'\>'
 t_GREATEREQUAL  = r'\>='
-t_NOT           = r'\!'
 t_LBRACKET      = r'\('
 t_RBRACKET      = r'\)'
 t_LBRACE        = r'\{'
@@ -100,6 +91,11 @@ t_COLON         = r'\:'
 t_OR            = r'\|'
 t_OREQUALS      = r'\|='
 t_OROR          = r'\|\|'
+t_DOT           = r'\.'
+t_DOTDIV        = r"\./"
+t_DOTEXP        = r"\.\^"
+t_DOTMUL        = r"\.\*"
+t_EXP           = r"\^"
 
 
 def t_NUMBER(t):
@@ -112,7 +108,7 @@ def t_STRING(t):
     return t
 
 def t_TRANSPOSE(t):
-    r"[\w]+\.'"
+    r"\.'"
     return t
 
 def t_IDENTIFIER(t):
@@ -129,16 +125,16 @@ def t_COMMA(t):
     print (t.lexer.lineno)
     return t
 
+def t_comment(t):
+    r"%.*"
+    temp = list(t.value)
+    temp.pop(0)
+    t.value = "".join(temp)     #removes % sign from comment
+    comments.append((t.value,lexer.lineno))
+
 def t_error(t):
     print("Invalid character: '%s' " %t.value)
     t.lexer.skip(1)
-
-def t_COMMENT(t):
-    r"%.*"
-    temp = list(t.value)
-    temp[0] = "#"
-    t.value = "".join(temp)
-    return t
 
 def t_SPACES(t):
     r"[ |\t]"
@@ -153,11 +149,13 @@ lexer = lex.lex()
 if __name__ == '__main__':
     lexer = lex.lex()
     data =  '''
-    for end %hello what is going on here :
-    : 7\8
+%hello this is a comment
+%hello
             '''
 
     lexer.input(data)
 
     for tok in lexer:
         print(tok)
+
+    print(comments)
