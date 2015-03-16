@@ -330,7 +330,7 @@ yacc.yacc()
 
 data = """
         %hello
-        
+
         """
 
 output = yacc.parse(data)
