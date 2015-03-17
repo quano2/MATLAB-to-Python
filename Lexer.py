@@ -16,6 +16,7 @@ tokens = [
     'DIV',
     'LDIV',
     'AND',
+    'ANDAND',
     'EQUALEQUAL',
     'NOTEQUAL',
     'LESSTHAN',
@@ -33,7 +34,6 @@ tokens = [
     'SEMI',
     'COLON',
     'COMMA',
-    'COMMENT',
     'FIELD',
     'OR',
     'OREQUALS',
@@ -42,7 +42,8 @@ tokens = [
     'DOTDIV',
     'DOTEXP',
     'DOTMUL',
-    'EXP'
+    'EXP',
+    'NOT'
 
 ]
 
@@ -76,6 +77,7 @@ t_TIMES         = r'\*'
 t_DIV           = r'/'
 t_LDIV          = r'\\'
 t_AND           = r'\&'
+t_ANDAND        = r'\&\&'
 t_EQUALEQUAL    = r'\=='
 t_NOTEQUAL      = r'\~='
 t_LESSTHAN      = r'\<'
@@ -96,7 +98,7 @@ t_DOTDIV        = r"\./"
 t_DOTEXP        = r"\.\^"
 t_DOTMUL        = r"\.\*"
 t_EXP           = r"\^"
-
+t_NOT           = r"\~"
 
 def t_NUMBER(t):
     r"(0x[0-9A-Fa-f]+)|((\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?[ij]?)"
@@ -104,7 +106,7 @@ def t_NUMBER(t):
     return t
 
 def t_STRING(t):
-    r"^[a-zA-Z][a-zA-z0-9]*"   #Add search for '
+    r"^[a-zA-Z][a-zA-z0-9]*"
     return t
 
 def t_TRANSPOSE(t):
@@ -149,13 +151,12 @@ lexer = lex.lex()
 if __name__ == '__main__':
     lexer = lex.lex()
     data =  '''
-%hello this is a comment
-%hello
+6
             '''
 
     lexer.input(data)
 
     for tok in lexer:
         print(tok)
-
-    print(comments)
+    if comments:
+        print(comments)

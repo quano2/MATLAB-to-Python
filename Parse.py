@@ -3,11 +3,25 @@ import Lexer
 
 tokens = Lexer.tokens
 precedence = (
-    ("nonassoc", "LESSTHAN", "LESSEQUAL", "GREATERTHAN", "GREATEREQUAL"),
+    ("right","EQUALS","OREQUALS"),
+    ("left", "COMMA"),
+    ("left", "COLON"),
+    ("left", "OROR","ANDAND"),
+    ("left", "EQUALEQUAL", "NOTEQUAL", "GREATEREQUAL", "LESSEQUAL", "GREATERTHAN", "LESSTHAN"),
+    ("left", "OR", "AND"),
     ("left", "PLUS", "MINUS"),
-    ("left", "TIMES","DIV"),
+    ("left", "TIMES","DIV","DOTMUL","DOTDIV","LDIV"),
+    ("right","UMINUS","NOT"),
     ("right","TRANSPOSE"),
-    ("right","UMINUS")
+    ("right","EXP", "DOTEXP"),
+    ("nonassoc","LBRACKET","RBRACKET","RBRACE","LBRACE"),
+    ("left", "FIELD","DOT"),
+
+    #("nonassoc", "LESSTHAN", "LESSEQUAL", "GREATERTHAN", "GREATEREQUAL"),
+    #("left", "PLUS", "MINUS"),
+    #("left", "TIMES","DIV"),
+    #("right","TRANSPOSE"),
+    #("right","UMINUS")
 )
 
 
@@ -19,6 +33,7 @@ def p_top(p):
         | top func_decl end semi_opt
         | top func_decl stmt_list end semi_opt
     """
+    print("top")
 
 def p_semi_opt(p):
     """
@@ -26,6 +41,7 @@ def p_semi_opt(p):
              | semi_opt SEMI
              | semi_opt COMMA
     """
+    print("semi_opt")
     pass
 
 def p_stmt(p):
@@ -43,8 +59,9 @@ def p_stmt(p):
             | switch_stmt
             | try_catch
             | while_stmt
-            | foo_stmt
     """
+    print("stmt")
+    #| foo_stmt missing
     p[0] = p[1]
 
 def p_arg1(p):
@@ -54,51 +71,73 @@ def p_arg1(p):
             | IDENTIFIER
             | GLOBAL
     """
-    p[0] = (p[1].type, p[1].value)
+    print("arg1")
+    print(p[0])
+    print("woop its arg1")
+    p[0] = p[1]
 
 def p_args(p):
     """
     args    : arg1
             | args arg1
     """
+    print("arg")
+
 def p_command(p):
     """
     command : IDENTIFIER args SEMI
     """
+    print("command")
 
 def p_global_list(p):
     """global_list  : IDENTIFIER
                     | global_list IDENTIFIER
     """
+    print("global_list")
 
 def p_global_stmt(p):
     """
     global_stmt : GLOBAL global_list SEMI
                 | GLOBAL IDENTIFIER EQUALS expr SEMI
     """
+    print("global_stmt")
 
-def p_foo_stmt(p):
-    "foo_stmt : expr OROR expr SEMI"
+#def p_foo_stmt(p):
+#    """
+#    foo_stmt : expr OROR expr SEMI
+#    """
+#    #THIS HAD A SEMI AT THE END!!!!!!*
 
 def p_persistent_stmt(p):
     """
     persistent_stmt : PERSISTENT global_list SEMI
-    | PERSISTENT IDENTIFIER EQUALS expr SEMI
+                    | PERSISTENT IDENTIFIER EQUALS expr SEMI
     """
+    print("persistent_stmt")
 
 def p_return_stmt(p):
-    "return_stmt : RETURN SEMI"
+    """
+    return_stmt : RETURN SEMI
+    """
+    print("return_stmt")
 
 def p_continue_stmt(p):
-    "continue_stmt : CONTINUE SEMI"
+    """
+    continue_stmt : CONTINUE SEMI
+    """
+    print("continue_stmt")
 
 def p_break_stmt(p):
-    "break_stmt : BREAK SEMI"
+    """
+    break_stmt : BREAK SEMI
+    """
+    print("break_stmt")
 
 def p_switch_stmt(p):
     """
     switch_stmt : SWITCH expr semi_opt case_list end
     """
+    print("switch_stmt")
 
 def p_case_list(p):
     """
@@ -107,24 +146,28 @@ def p_case_list(p):
                 | CASE expr error stmt_list_opt case_list
                 | OTHERWISE stmt_list
     """
+    print("case_list")
 
 def p_try_catch(p):
     """
     try_catch   : TRY stmt_list CATCH stmt_list end
                 | TRY stmt_list end
     """
+    print("try_catch")
 
 def p_null_stmt(p):
     """
     null_stmt   : SEMI
                 | COMMA
     """
+    print("null_stmt")
     p[0] = None
 
 def p_func_decl(p):
     """func_decl    : FUNCTION IDENTIFIER args_opt SEMI
                     | FUNCTION ret EQUALS IDENTIFIER args_opt SEMI
     """
+    print("func_decl")
 
 def p_args_opt(p):
     """
@@ -132,12 +175,14 @@ def p_args_opt(p):
                 | LBRACKET RBRACKET
                 | LBRACKET expr_list RBRACKET
     """
+    print("args_opt")
 
-def p_arg_list(p):
-    """
-    arg_list    : IDENTIFIER
-                | arg_list COMMA IDENTIFIER
-    """
+#def p_arg_list(p):
+#    """
+#    arg_list    : IDENTIFIER
+#                | arg_list COMMA IDENTIFIER
+#    """
+#   print("arg_list")
 
 def p_ret(p):
     """
@@ -145,58 +190,68 @@ def p_ret(p):
         | LBRACKET RBRACKET
         | LBRACKET expr_list RBRACKET
     """
+    print("ret")
 
 def p_stmt_list_opt(p):
     """
     stmt_list_opt   :
                     | stmt_list
     """
+    print("stmt_list_opt")
 
 def p_stmt_list(p):
     """
     stmt_list   : stmt
                 | stmt_list stmt
     """
+    print("stmt_list")
 
 def p_concat_list(p):
     """
     concat_list : expr_list SEMI expr_list
                 | concat_list SEMI expr_list
     """
+    print("concat_list")
 
 def p_expr_list(p):
     """
     expr_list   : exprs
                 | exprs COMMA
     """
+    print("expr_list")
 
 def p_exprs(p):
     """
     exprs   : expr
             | exprs COMMA expr
     """
+    print("exprs")
 
 def p_expr_stmt(p):
     """
     expr_stmt : expr_list SEMI
     """
+    print("expr_stmt")
 
 def p_while_stmt(p):
     """
     while_stmt : WHILE expr SEMI stmt_list end
     """
+    print("while_stmt")
 
 def p_separator(p):
     """
     sep     : COMMA
             | SEMI
     """
+    print("separator")
 
 def p_if_stmt(p):
     """
     if_stmt : IF expr sep stmt_list_opt elseif_stmt end
             | IF expr error stmt_list_opt elseif_stmt end
     """
+    print("if_stmt")
 
 def p_elseif_stmt(p):
     """
@@ -204,6 +259,7 @@ def p_elseif_stmt(p):
                 | ELSE stmt_list_opt
                 | ELSEIF expr sep stmt_list_opt elseif_stmt
     """
+    print("elseif_stmt")
 
 def p_for_stmt(p):
     """
@@ -211,6 +267,7 @@ def p_for_stmt(p):
                 | FOR LBRACKET IDENTIFIER EQUALS expr RBRACKET SEMI stmt_list end
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
+    print("for_stmt")
 
 def p_expr(p):
     """expr : IDENTIFIER
@@ -218,31 +275,51 @@ def p_expr(p):
             | string
             | colon
             | NOTEQUAL
+            | NOT
             | matrix
             | cellarray
             | expr2
             | expr1
     """
+    print("expr")
+    p[0] = str(p[1])
+    p[0] = ('hello')
+    print('here', p[0])
 
 def p_expr_number(p):
-    "number : NUMBER"
+    """
+    number : NUMBER
+    """
+    print("expr_number")
     print("oh look a number")
-    print (p[1].value)
+    print (p[1])
+    p[0] = str(p[1])
+    print('done', p[0])
 
 def p_expr_end(p):
-    "end : END"
+    """
+    end : END
+    """
+    print("expr_end")
 
 def p_expr_string(p):
-    "string : STRING"
+    """
+    string : STRING
+    """
+    print("expr_string")
 
 def p_expr_colon(p):
-    "colon : COLON"
+    """
+    colon : COLON
+    """
+    print("expr_colon")
 
 def p_expr1(p):
     """expr1    : MINUS expr %prec UMINUS
                 | PLUS expr %prec UMINUS
                 | NOTEQUAL expr
     """
+    print("expr1")
 
 def p_cellarray(p):
     """
@@ -251,6 +328,7 @@ def p_cellarray(p):
                 | LBRACE concat_list RBRACE
                 | LBRACE concat_list SEMI RBRACE
     """
+    print("cellarray")
 
 def p_matrix(p):
     """matrix   : LBRACKET RBRACKET
@@ -259,33 +337,43 @@ def p_matrix(p):
                 | LBRACKET expr_list RBRACKET
                 | LBRACKET expr_list SEMI RBRACKET
     """
+    print("matrix")
 
 def p_paren_expr(p):
     """
     expr : LBRACKET expr RBRACKET
     """
+    print("paren_expr")
+
 def p_field_expr(p):
     """
     expr : expr FIELD
     """
+    print("field_expr")
 
 def p_transpose_expr(p):
 # p[2] contains the exact combination of plain and conjugate
 # transpose operators, such as "'.''.''''".
-    "expr : expr TRANSPOSE"
+    """
+    expr : expr TRANSPOSE
+    """
+    print("transpose_expr")
 
 def p_cellarrayref(p):
     """expr : expr LBRACE expr_list RBRACE
             | expr LBRACE RBRACE
     """
+    print("cellarrayref")
 
 def p_funcall_expr(p):
     """expr : expr LBRACKET expr_list RBRACKET
             | expr LBRACKET RBRACKET
     """
+    print("funcall_expr")
 
 def p_expr2(p):
     """expr2    : expr AND expr
+                | expr ANDAND expr
                 | expr LDIV expr
                 | expr COLON expr
                 | expr DIV expr
@@ -308,6 +396,7 @@ def p_expr2(p):
                 | expr EQUALS expr
                 | expr OREQUALS expr
     """
+    print("expr2")
 # The algorithm, which decides if an
 # expression F(X)
 # is arrayref or funcall, is implemented in
@@ -328,12 +417,9 @@ def p_error(p):
 
 yacc.yacc()
 
-data = """
-        %hello
-
-        """
+data =  "5+6"
 
 output = yacc.parse(data)
 
 print (output)
-print (Lexer.comments)
+#print (Lexer.comments)

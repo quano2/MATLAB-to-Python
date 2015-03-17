@@ -29,3 +29,7 @@ NOTES:
 TO DO LIST:
 - Check tokens for excess
 - Check grammar
+- Fix string lexer
+
+CURRENT STATUS:
+- Will recognise tokens but not add them to parse tree :(
