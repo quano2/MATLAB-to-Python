@@ -64,7 +64,6 @@ reserved = {
     'try'       : 'TRY',
     'catch'     : 'CATCH',
     'global'    : 'GLOBAL',
-    'persistent': 'PERSISTENT',
     'function'  : 'FUNCTION'
 }
 tokens += list(reserved.values())
@@ -121,6 +120,8 @@ def new():
             t.type = "FIELD"
             return t
         if t.value in reserved:
+            if t.value=="persistent":
+                pass
             t.type = reserved.get(t.value,'ID')
         return t
 

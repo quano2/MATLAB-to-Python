@@ -34,8 +34,6 @@ def p_top(p):
     else:
         print ("Different")
 
-
-
 def p_semi_opt(p):
     """
     semi_opt :
@@ -51,7 +49,6 @@ def p_stmt(p):
             | break_stmt
             | expr_stmt
             | global_stmt
-            | persistent_stmt
             | command
             | for_stmt
             | if_stmt
@@ -74,6 +71,8 @@ def p_arg1(p):
     """
     print("arg1")
     p[0] = p[1]
+        #not sure what this is here for??
+
 
 def p_args(p):
     """
@@ -85,18 +84,24 @@ def p_args(p):
         p[0]=p[1]
     else:
         p[0]=(p[1],p[2])
+        #not sure what this is here for??
 
 def p_command(p):
     """
     command : IDENTIFIER args SEMI
     """
     print("command")
+    #not sure what this is here for??
 
 def p_global_list(p):
     """global_list  : IDENTIFIER
                     | global_list IDENTIFIER
     """
     print("global_list")
+    if len(p)==2:
+        p[0] = p[1]
+    else:
+        p[0] = (p[1],p[2])
 
 def p_global_stmt(p):
     """
@@ -104,43 +109,43 @@ def p_global_stmt(p):
                 | GLOBAL IDENTIFIER EQUALS expr SEMI
     """
     print("global_stmt")
-
+    if len(p)==4:
+        p[0] = ("global",p[2])
+    else:
+        p[0] = ("global",p[2],p[3],p[4])
 #def p_foo_stmt(p):
 #    """
 #    foo_stmt : expr OROR expr SEMI
 #    """
 
 
-def p_persistent_stmt(p):
-    """
-    persistent_stmt : PERSISTENT global_list SEMI
-                    | PERSISTENT IDENTIFIER EQUALS expr SEMI
-    """
-    print("persistent_stmt")
-
 def p_return_stmt(p):
     """
     return_stmt : RETURN SEMI
     """
     print("return_stmt")
+    p[0] = p[1]
 
 def p_continue_stmt(p):
     """
     continue_stmt : CONTINUE SEMI
     """
     print("continue_stmt")
+    p[0] = p[1]
 
 def p_break_stmt(p):
     """
     break_stmt : BREAK SEMI
     """
     print("break_stmt")
+    p[0] = p[1]
 
 def p_switch_stmt(p):
     """
     switch_stmt : SWITCH expr semi_opt case_list end
     """
     print("switch_stmt")
+    p[0] = (p[1],p[2],p[4])
 
 def p_case_list(p):
     """
@@ -150,6 +155,12 @@ def p_case_list(p):
                 | OTHERWISE stmt_list
     """
     print("case_list")
+    if len(p)==1:
+        p[0] = ""
+    elif len(p)==3:
+        p[0] = (p[1],p[2])
+    else:
+        p[0] = (p[1],p[2],p[3],p[4])
 
 def p_try_catch(p):
     """
@@ -157,6 +168,10 @@ def p_try_catch(p):
                 | TRY stmt_list end
     """
     print("try_catch")
+    if len(p)==4:
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1],p[2],p[3],p[4])
 
 def p_null_stmt(p):
     """
@@ -164,13 +179,17 @@ def p_null_stmt(p):
                 | COMMA
     """
     print("null_stmt")
-    p[0] = "SONETHING"
+    p[0] = None
 
 def p_func_decl(p):
     """func_decl    : FUNCTION IDENTIFIER args_opt SEMI
                     | FUNCTION ret EQUALS IDENTIFIER args_opt SEMI
     """
     print("func_decl")
+    if len(p)==5:
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1],p[2],p[3],p[4],p[5])
 
 def p_args_opt(p):
     """
@@ -179,13 +198,20 @@ def p_args_opt(p):
                 | LBRACKET expr_list RBRACKET
     """
     print("args_opt")
+    if len(p)==1:
+        p[0] = ''  #empty for now
+    elif len(p)==2:
+        p[0] = (p[1],"",p[2])
+    else:
+        p[0] = (p[1],p[2],p[3])
 
 #def p_arg_list(p):
 #    """
 #    arg_list    : IDENTIFIER
 #                | arg_list COMMA IDENTIFIER
 #    """
-#   print("arg_list")
+#    print("arg_list")
+#Not sure if needed or not, not used so unreachable
 
 def p_ret(p):
     """
@@ -194,6 +220,12 @@ def p_ret(p):
         | LBRACKET expr_list RBRACKET
     """
     print("ret")
+    if len(p)==2:
+        p[0] = (p[1])
+    elif len(p)==3:
+        p[0] = (p[1],"",p[2])
+    else:
+        p[0] = (p[1],p[2],p[3])
 
 def p_stmt_list_opt(p):
     """
@@ -201,6 +233,10 @@ def p_stmt_list_opt(p):
                     | stmt_list
     """
     print("stmt_list_opt")
+    if len(p)==1:
+        p[0] = ""     #This is wrong!!!
+    else:
+        p[0] = p[1]
 
 def p_stmt_list(p):
     """
@@ -210,6 +246,14 @@ def p_stmt_list(p):
     print("stmt_list")
     if len(p)==2:
         p[0] = p[1]
+    else:
+        if p[2]==None:  #ignore ; between lines, might be wrong
+            p[0]=p[1]
+        elif p[1]==None or p[1]=="ERROR": #might be wrong, but removes Nones and ERROR
+            p[0] = p[2]
+        else:
+            p[0] = (p[1],p[2])
+            print ("here is stmt_list",p[0])
 
 def p_concat_list(p):
     """
@@ -217,6 +261,7 @@ def p_concat_list(p):
                 | concat_list SEMI expr_list
     """
     print("concat_list")
+    p[0]= (p[1],p[3])    #no idea
 
 def p_expr_list(p):
     """
@@ -224,8 +269,7 @@ def p_expr_list(p):
                 | exprs COMMA
     """
     print("expr_list")
-    if len(p)==2:
-        p[0] = p[1]
+    p[0] = p[1]
 
 def p_exprs(p):
     """
@@ -235,6 +279,8 @@ def p_exprs(p):
     print("exprs")
     if len(p)==2:
         p[0]=p[1]
+    else:
+        p[0] = (p[1],p[2],p[3]) #guess
 
 def p_expr_stmt(p):
     """
@@ -248,6 +294,7 @@ def p_while_stmt(p):
     while_stmt : WHILE expr SEMI stmt_list end
     """
     print("while_stmt")
+    p[0] = (p[1],p[2],p[4])
 
 def p_separator(p):
     """
@@ -255,6 +302,7 @@ def p_separator(p):
             | SEMI
     """
     print("separator")
+    p[0]=p[1]
 
 def p_if_stmt(p):
     """
@@ -262,6 +310,7 @@ def p_if_stmt(p):
             | IF expr error stmt_list_opt elseif_stmt end
     """
     print("if_stmt")
+    p[0] = (p[1],p[2],p[4],p[5])
 
 def p_elseif_stmt(p):
     """
@@ -270,6 +319,12 @@ def p_elseif_stmt(p):
                 | ELSEIF expr sep stmt_list_opt elseif_stmt
     """
     print("elseif_stmt")
+    if len(p)==1:
+        p[0] = None
+    elif len(p)==3:
+        p[0] = (p[1],p[2])
+    else:
+        p[0] = (p[1],p[2],p[4],p[6])
 
 def p_for_stmt(p):
     """
@@ -278,6 +333,12 @@ def p_for_stmt(p):
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
     print("for_stmt")
+    if len(p)==8:
+        p[0] = (p[1],p[2],p[3],p[4],p[6])
+    elif len(p)==10:
+        p[0] = (p[1],(p[3],p[4],p[5]),p[8])
+    else:
+        p[0] = "Matrix for loops not supported"
 
 def p_expr_number(p):
     """
@@ -306,18 +367,21 @@ def p_expr_end(p):
     end : END
     """
     print("expr_end")
+    p[0] = p[1]
 
 def p_expr_string(p):
     """
     string : STRING
     """
     print("expr_string")
+    p[0] = p[1]
 
 def p_expr_colon(p):
     """
     colon : COLON
     """
     print("expr_colon")
+    p[0] = p[1]
 
 def p_expr1(p):
     """expr1    : MINUS expr %prec UMINUS
@@ -325,6 +389,7 @@ def p_expr1(p):
                 | NOTEQUAL expr
     """
     print("expr1")
+    p[0] = (p[1]+p[2])
 
 def p_cellarray(p):
     """
@@ -334,6 +399,7 @@ def p_cellarray(p):
                 | LBRACE concat_list SEMI RBRACE
     """
     print("cellarray")
+    # Cell arrays will not be supported.
 
 def p_matrix(p):
     """matrix   : LBRACKET RBRACKET
@@ -343,6 +409,7 @@ def p_matrix(p):
                 | LBRACKET expr_list SEMI RBRACKET
     """
     print("matrix")
+    # Matrices are not supported currently
 
 def p_paren_expr(p):
     """
@@ -356,6 +423,7 @@ def p_field_expr(p):
     expr : expr FIELD
     """
     print("field_expr")
+    p[0] = (p[2],p[1])
 
 def p_transpose_expr(p):
 # p[2] contains the exact combination of plain and conjugate
@@ -364,18 +432,21 @@ def p_transpose_expr(p):
     expr : expr TRANSPOSE
     """
     print("transpose_expr")
+    p[0] = (p[2],p[1])
 
 def p_cellarrayref(p):
     """expr : expr LBRACE expr_list RBRACE
             | expr LBRACE RBRACE
     """
     print("cellarrayref")
+    # Not supported
 
 def p_funcall_expr(p):
     """expr : expr LBRACKET expr_list RBRACKET
             | expr LBRACKET RBRACKET
     """
     print("funcall_expr")
+    #LOOK THIS UP IN GRAMMAR!!!!
 
 def p_expr2(p):
     """expr2    : expr AND expr
@@ -426,11 +497,15 @@ def p_error(p):
 nlex = Lexer.new()
 yacc.yacc()
 
-data =  """ 6+6;
-5*9;
+data =  """
+try
+p = 8/9;
+catch ERROR
+100*200;
+end
 """
 
-output = yacc.parse(data,lexer=nlex,debug=1)
+output = yacc.parse(data,lexer=nlex,debug=0)
 
 print ()
 print (output)
