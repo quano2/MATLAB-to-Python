@@ -7,7 +7,7 @@ Currently the only working feature is the lexical analysis which will work for s
 ADDED:
 - Comments as tokens
 - Keywords as tokens
-- Formal grammar added (loads of errors at the moment!)
+- Formal grammar added (Some errors at the moment!)
 
 
 TOKENS NOT NEEDED:
@@ -25,6 +25,7 @@ PROBLEMS NOTICED:
 NOTES:
 - Dotdivequals and Dotmulequals have been removed not sure what they do
 - Lots more equals removed
+- L/RBRACKET's are different tokens in grammar
 
 TO DO LIST:
 - Check tokens for excess
@@ -32,4 +33,5 @@ TO DO LIST:
 - Fix string lexer
 
 CURRENT STATUS:
-- Will recognise tokens but not add them to parse tree :(
+- Will recognise tokens
+- Will parse simple expressions such as 9+5*(4-1)

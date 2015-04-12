@@ -1,7 +1,8 @@
 import yacc as yacc
 import Lexer
+from Lexer import tokens
 
-tokens = Lexer.tokens
+
 precedence = (
     ("right","EQUALS","OREQUALS"),
     ("left", "COMMA"),
@@ -14,14 +15,8 @@ precedence = (
     ("right","UMINUS","NOT"),
     ("right","TRANSPOSE"),
     ("right","EXP", "DOTEXP"),
-    ("nonassoc","LBRACKET","RBRACKET","RBRACE","LBRACE"),
-    ("left", "FIELD","DOT"),
-
-    #("nonassoc", "LESSTHAN", "LESSEQUAL", "GREATERTHAN", "GREATEREQUAL"),
-    #("left", "PLUS", "MINUS"),
-    #("left", "TIMES","DIV"),
-    #("right","TRANSPOSE"),
-    #("right","UMINUS")
+    ("nonassoc","RBRACE","LBRACE"),
+    ("left", "FIELD","DOT")
 )
 
 
@@ -34,6 +29,12 @@ def p_top(p):
         | top func_decl stmt_list end semi_opt
     """
     print("top")
+    if len(p)==2:
+        p[0] = p[1]
+    else:
+        print ("Different")
+
+
 
 def p_semi_opt(p):
     """
@@ -72,8 +73,6 @@ def p_arg1(p):
             | GLOBAL
     """
     print("arg1")
-    print(p[0])
-    print("woop its arg1")
     p[0] = p[1]
 
 def p_args(p):
@@ -82,6 +81,10 @@ def p_args(p):
             | args arg1
     """
     print("arg")
+    if len(p)==2:
+        p[0]=p[1]
+    else:
+        p[0]=(p[1],p[2])
 
 def p_command(p):
     """
@@ -106,7 +109,7 @@ def p_global_stmt(p):
 #    """
 #    foo_stmt : expr OROR expr SEMI
 #    """
-#    #THIS HAD A SEMI AT THE END!!!!!!*
+
 
 def p_persistent_stmt(p):
     """
@@ -161,7 +164,7 @@ def p_null_stmt(p):
                 | COMMA
     """
     print("null_stmt")
-    p[0] = None
+    p[0] = "SONETHING"
 
 def p_func_decl(p):
     """func_decl    : FUNCTION IDENTIFIER args_opt SEMI
@@ -205,6 +208,8 @@ def p_stmt_list(p):
                 | stmt_list stmt
     """
     print("stmt_list")
+    if len(p)==2:
+        p[0] = p[1]
 
 def p_concat_list(p):
     """
@@ -219,6 +224,8 @@ def p_expr_list(p):
                 | exprs COMMA
     """
     print("expr_list")
+    if len(p)==2:
+        p[0] = p[1]
 
 def p_exprs(p):
     """
@@ -226,12 +233,15 @@ def p_exprs(p):
             | exprs COMMA expr
     """
     print("exprs")
+    if len(p)==2:
+        p[0]=p[1]
 
 def p_expr_stmt(p):
     """
     expr_stmt : expr_list SEMI
     """
     print("expr_stmt")
+    p[0] = p[1]
 
 def p_while_stmt(p):
     """
@@ -269,6 +279,12 @@ def p_for_stmt(p):
     """
     print("for_stmt")
 
+def p_expr_number(p):
+    """
+    number : NUMBER
+    """
+    p[0] = str(p[1])
+
 def p_expr(p):
     """expr : IDENTIFIER
             | number
@@ -282,19 +298,8 @@ def p_expr(p):
             | expr1
     """
     print("expr")
-    p[0] = str(p[1])
-    p[0] = ('hello')
-    print('here', p[0])
+    p[0] = p[1]
 
-def p_expr_number(p):
-    """
-    number : NUMBER
-    """
-    print("expr_number")
-    print("oh look a number")
-    print (p[1])
-    p[0] = str(p[1])
-    print('done', p[0])
 
 def p_expr_end(p):
     """
@@ -344,6 +349,7 @@ def p_paren_expr(p):
     expr : LBRACKET expr RBRACKET
     """
     print("paren_expr")
+    p[0]=(p[1],p[2],p[3])
 
 def p_field_expr(p):
     """
@@ -397,6 +403,7 @@ def p_expr2(p):
                 | expr OREQUALS expr
     """
     print("expr2")
+    p[0]=(p[1],p[2],p[3])
 # The algorithm, which decides if an
 # expression F(X)
 # is arrayref or funcall, is implemented in
@@ -413,13 +420,18 @@ def p_expr2(p):
 # phase.
 
 def p_error(p):
+    print (str(p))
     print ('unable to parse %s' %p )
 
+nlex = Lexer.new()
 yacc.yacc()
 
-data =  "5+6"
+data =  """ 6+6;
+5*9;
+"""
 
-output = yacc.parse(data)
+output = yacc.parse(data,lexer=nlex,debug=1)
 
+print ()
 print (output)
 #print (Lexer.comments)
