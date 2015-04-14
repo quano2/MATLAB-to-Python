@@ -4,6 +4,9 @@
 __author__ = 'Joe'
 import lex
 
+class UnknownCharacterError(Exception):
+    pass
+
 
 #Tokens
 
@@ -107,11 +110,11 @@ def new():
         return t
 
     def t_STRING(t):
-        r"^'[a-zA-Z][a-zA-z0-9]*'"
+        r"\'[a-zA-Z][a-zA-z0-9]*\'"
         return t
 
     def t_TRANSPOSE(t):
-        r"\.'"
+        r"([\.]?\')"
         return t
 
     def t_IDENTIFIER(t):
@@ -119,11 +122,13 @@ def new():
         if t.value[0] == ".":
             t.type = "FIELD"
             return t
-        if t.value in reserved:
-            if t.value=="persistent":
-                pass
+        elif t.value=="persistent":
+            pass    #ignore persistent no use in python
+        elif t.value in reserved:
             t.type = reserved.get(t.value,'ID')
-        return t
+            return t
+        else:
+            return t
 
     def t_COMMA(t):
         r","
@@ -138,8 +143,7 @@ def new():
         comments.append((t.value,lexer.lineno))
 
     def t_error(t):
-        print("Invalid character: '%s' " %t.value)
-        t.lexer.skip(1)
+        raise UnknownCharacterError(t.value[0],t.lineno)
 
     def t_SPACES(t):
         r"[ |\t]"
@@ -150,7 +154,7 @@ def new():
         t.lexer.lineno += 1
         t.type= "SEMI"
         t.value=";"
-        return t
+        #return t    commented out so it will work with code over lines.
 
     lexer = lex.lex()
     lexer.comments = comments
@@ -158,8 +162,9 @@ def new():
 
 if __name__ == '__main__':
     lexer = new()
-    data =  '''5+9;
-                6*2;
+    data =  '''p= 'hello'.';
+    t'
+    t.'
             '''
 
     lexer.input(data)
