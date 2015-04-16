@@ -1,40 +1,73 @@
 from Parse import myparser
 
 def convert(code):
-    newcode = ' '.join(code)
+    if isinstance(code,str):
+        return code
+    newcode = '\n'.join(code)
     return newcode
 
-def reduce(code,output=[]):
-    for item in code:
-        print ("reducing",tuple)
-        if isinstance(item,tuple):
-            print ("reducing",item)
-            reduce(item,output)
-        elif isinstance(item,str):
-            if code not in output:
-                output.append(convert(item))
-                print (code)
+def decode(list):
+    indents = []
+    for i in list:
+        print(i)
+        for x in range(i[0],i[1]+1):
+            print (x)
+            indents.append(x)
+    return sorted(indents)
+
+def indent(code,list):
+    temp = code.split('\n')
+    for i in list:
+        i-=1
+        temp[i] = "\t"+temp[i]
+    return "\n".join(temp)
+
+
+def translate(input):
+    output,ind = myparser(input)
+    de = decode(ind)
+    output = indent(output,de)
     return output
 
 
-#r= reduce(('a','=','5'))
-r = reduce((('a', '=', ('5.0', '+', '10.0')), ('\n','b', '=', ('99.0', '/', '2.0'))))
 
-print ("\n\n",r)
-def gencode(code):
-    for line in code:
-        print (len(line),line)
-        for char in line:
-            print (type(char))
-    return False
+if __name__=="__main__":
+    output,ind = myparser("""
+    i = 6;
+    for i = 5:6;
+        a = i+2;
+    for o = i:10;
+        p = 1+6;
+    for i = 1:10;
+        p = 1+6;
+    for i = 1:10;
+        p = 1+6;
+    for i = 1:10;
+        p = 1+6;
+    for i = 1:10;
+        p = 1+6;
+    for i = 1:10;
+        p = 1+6;
+    end
+    end
+    end
+    end
+    end
+    a = a + p;
+    end
+    p=8;
+    end""")
 
+    output = output.print()
+    print (output)
 
-#output = myparser('''a = 5 + 10;
-#b=99/2;c=4+2;''')
-#print (output)
+    print ("here",ind)
+    de = decode(ind)
+    print ('here is decoded',de)
 
-#if output:
-#    print ("start")
-#    gencode(output)
+    output = indent(output,de)
+    print ("output is",output)
 
-
+    file = open("newfile.py","w")
+    file.write(output)
+    file.close()

@@ -1,6 +1,7 @@
 import yacc as yacc
 import Lexer
 from Lexer import tokens
+from node import *
 
 class MySystemError(Exception):
     pass
@@ -25,7 +26,10 @@ precedence = (
     ("left", "FIELD","DOT")
 )
 
-
+global indent
+global counter
+counter =0
+indent = []
 def p_top(p):
     """
     top :
@@ -36,7 +40,7 @@ def p_top(p):
     """
     print("top")
     if len(p)==2:
-        p[0] = (p[1])
+        p[0] = p[1]
     else:
         print ("Different")
 
@@ -66,7 +70,7 @@ def p_stmt(p):
     """
     print("stmt")
     #| foo_stmt missing
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_arg1(p):
     """
@@ -76,7 +80,7 @@ def p_arg1(p):
             | GLOBAL
     """
     print("arg1")
-    p[0] = (p[1])
+    p[0] = p[1]
         #not sure what this is here for??
 
 
@@ -87,9 +91,9 @@ def p_args(p):
     """
     print("arg")
     if len(p)==2:
-        p[0]=(p[1])
+        p[0]=p[1]
     else:
-        p[0]=(p[1],p[2])
+        p[0]=p[1],p[2]
         #not sure what this is here for??
 
 def p_command(p):
@@ -98,7 +102,7 @@ def p_command(p):
     """
     print("command")
     #not sure what this is here for??
-    raise NotSupported("Command",p.lineno)
+    raise NotSupported("Command",p.lineno(1))
 
 def p_global_list(p):
     """global_list  : IDENTIFIER
@@ -106,7 +110,7 @@ def p_global_list(p):
     """
     print("global_list")
     if len(p)==2:
-        p[0] = (p[1])
+        p[0] = p[1]
     else:
         p[0] = (p[1],p[2])
 
@@ -131,21 +135,21 @@ def p_return_stmt(p):
     return_stmt : RETURN SEMI
     """
     print("return_stmt")
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_continue_stmt(p):
     """
     continue_stmt : CONTINUE SEMI
     """
     print("continue_stmt")
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_break_stmt(p):
     """
     break_stmt : BREAK SEMI
     """
     print("break_stmt")
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_switch_stmt(p):
     """
@@ -163,7 +167,7 @@ def p_case_list(p):
     """
     print("case_list")
     if len(p)==1:
-        p[0] = ("")
+        p[0] = ""
     elif len(p)==3:
         p[0] = (p[1],p[2])
     else:
@@ -206,7 +210,7 @@ def p_args_opt(p):
     """
     print("args_opt")
     if len(p)==1:
-        p[0] = ('')  #empty for now
+        p[0] = ''  #empty for now
     elif len(p)==2:
         p[0] = (p[1],"",p[2])
     else:
@@ -228,7 +232,7 @@ def p_ret(p):
     """
     print("ret")
     if len(p)==2:
-        p[0] = (p[1])
+        p[0] = p[1]
     elif len(p)==3:
         p[0] = (p[1],"",p[2])
     else:
@@ -241,9 +245,9 @@ def p_stmt_list_opt(p):
     """
     print("stmt_list_opt")
     if len(p)==1:
-        p[0] = ("")     #This is wrong!!!
+        p[0] = ""     #This is wrong!!!
     else:
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_stmt_list(p):
     """
@@ -252,14 +256,14 @@ def p_stmt_list(p):
     """
     print("stmt_list")
     if len(p)==2:
-        p[0] = (p[1])
+        p[0] = p[1]
     else:
         if p[2]==None:  #ignore ; between lines, might be wrong
-            p[0]=(p[1])
+            p[0]=p[1]
         elif p[1]==None or p[1]=="ERROR": #might be wrong, but removes Nones and ERROR
-            p[0] = (p[2])
+            p[0] = p[2]
         else:
-            p[0] = (p[1],p[2])
+            p[0] = Stmt_List(p[1],p[2])
 
 def p_concat_list(p):
     """
@@ -275,7 +279,7 @@ def p_expr_list(p):
                 | exprs COMMA
     """
     print("expr_list")
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_exprs(p):
     """
@@ -293,7 +297,7 @@ def p_expr_stmt(p):
     expr_stmt : expr_list SEMI
     """
     print("expr_stmt")
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_while_stmt(p):
     """
@@ -339,18 +343,22 @@ def p_for_stmt(p):
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
     print("for_stmt")
+    global indent
+    indent.append([p.lineno(1),p.lineno(7)-counter-1])
     if len(p)==8:
-        p[0] = (p[1],p[2],p[3],p[4],p[6])
+        if p[4].operator != ":":
+           raise MySystemError(p.lineno(4),p[4].operator)
+        p[0] = For(p[2],p[4],p[6])
     elif len(p)==10:
-        p[0] = (p[1],(p[3],p[4],p[5]),p[8])
+        raise NotSupported("Unknown",p.lineno(4))
     else:
-        p[0] = "Matrix for loops not supported"
+        raise NotSupported("Matrix for loop",p.lineno(4))
 
 def p_expr_number(p):
     """
     number : NUMBER
     """
-    p[0] = str(p[1])
+    p[0] = p[1]
 
 def p_expr(p):
     """expr : IDENTIFIER
@@ -365,15 +373,16 @@ def p_expr(p):
             | expr1
     """
     print("expr")
-    p[0] = (p[1])
-
+    p[0] = p[1]
 
 def p_expr_end(p):
     """
     end : END
     """
     print("expr_end")
-    p[0] = (p[1])
+    global counter
+    counter +=1
+    p[0] = p[1]
 
 def p_expr_string(p):
     """
@@ -405,9 +414,8 @@ def p_cellarray(p):
                 | LBRACE concat_list SEMI RBRACE
     """
     print("cellarray")
-    raise NotSupported("Cell array",p.lineno)
+    raise NotSupported("Cell array",p.lineno(1))
     # Cell arrays will not be supported.
-
 
 def p_matrix(p):
     """matrix   : LBRACKET RBRACKET
@@ -417,7 +425,7 @@ def p_matrix(p):
                 | LBRACKET expr_list SEMI RBRACKET
     """
     print("matrix")
-    raise NotSupported("Matrix",p.lineno)
+    raise NotSupported("Matrix",p.lineno(1))
     # Matrices are not supported currently
 
 def p_paren_expr(p):
@@ -449,7 +457,7 @@ def p_cellarrayref(p):
     """
     print("cellarrayref")
     # Not supported
-    raise NotSupported("Cell array reference",p.lineno)
+    raise NotSupported("Cell array reference",p.lineno(4))
 
 def p_funcall_expr(p):
     """expr : expr LBRACKET expr_list RBRACKET
@@ -457,7 +465,7 @@ def p_funcall_expr(p):
     """
     print("funcall_expr")
     #LOOK THIS UP IN GRAMMAR!!!!
-    raise NotSupported("funcall_expr",p.lineno)
+    raise NotSupported("funcall_expr",p.lineno(4))
 
 def p_expr2(p):
     """expr2    : expr AND expr
@@ -485,7 +493,7 @@ def p_expr2(p):
                 | expr OREQUALS expr
     """
     print("expr2")
-    p[0]=(p[1],p[2],p[3])
+    p[0]=Expr(p[1],p[2],p[3])
 # The algorithm, which decides if an
 # expression F(X)
 # is arrayref or funcall, is implemented in
@@ -508,32 +516,27 @@ def p_error(p):
     else:
         raise UnknownError(p)
 
-def myparser(input):
+def myparser(input,debug=0):
     mylexer = Lexer.new()
     yacc.yacc()
     try:
-        output = yacc.parse(input,lexer=mylexer,tracking=True,debug=0)
-        return output
+        output = yacc.parse(input,lexer=mylexer,tracking=True,debug=debug)
+        return output,indent
     except Lexer.UnknownCharacterError as e:
-        print ("An Invalid character '%s' has been found on line '%s'"%e.args)
-        return False
+        return Node("An Invalid character '%s' has been found on line '%s'"%e.args)
     except MySystemError as e:
-        print ("Syntax error on line '%s' at '%s'"%e.args)
-        return False
+        return Node("Syntax error on line '%s' at '%s'"%e.args)
     except NotSupported as e:
-        print ("Parser detected a '%s' on line '%s' which is not supported."%e.args)
-        return False
+        return Node ("Parser detected a '%s' on line '%s' which is not supported."%e.args)
     except UnknownError:
-        print ("Parser has come across a syntax error, please check for ';' at line ends.")
-        return False
+        return Node ("Parser has come across a syntax error, please check for ';' at line ends.")
 
 
 if __name__ == "__main__":
     nlex = Lexer.new()
     yacc.yacc()
 
-    data =  """myCell = {1, 2, 3;
-          'text', {11; 22; 33}};
+    data =  """i = 5 + 5;
 """
 
     #output = yacc.parse(data,lexer=nlex,debug=1)

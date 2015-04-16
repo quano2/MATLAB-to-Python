@@ -106,7 +106,6 @@ def new():
 
     def t_NUMBER(t):
         r"(0x[0-9A-Fa-f]+)|((\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?[ij]?)"
-        t.value = float(t.value)
         return t
 
     def t_STRING(t):
