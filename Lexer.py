@@ -118,8 +118,12 @@ def new():
 
     def t_IDENTIFIER(t):
         r"\.?[a-zA-Z_]+[a-zA-Z0-9_]*"
+        print (t.value)
         if t.value[0] == ".":
             t.type = "FIELD"
+            return t
+        elif t.value == "false" or t.value== "true":
+            t.value = t.value.title()
             return t
         elif t.value=="persistent":
             pass    #ignore persistent no use in python

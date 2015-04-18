@@ -26,10 +26,17 @@ precedence = (
     ("left", "FIELD","DOT")
 )
 
-global indent
+global indentlist
 global counter
+global start
+start = 0
 counter =0
-indent = []
+indentlist = []
+
+def indent(start,end):
+    global indentlist
+    indentlist.append([start,end])
+
 def p_top(p):
     """
     top :
@@ -72,6 +79,7 @@ def p_stmt(p):
     #| foo_stmt missing
     p[0] = p[1]
 
+
 def p_arg1(p):
     """
     arg1    : STRING
@@ -110,9 +118,9 @@ def p_global_list(p):
     """
     print("global_list")
     if len(p)==2:
-        p[0] = p[1]
+        p[0] = Global_List(p[1])
     else:
-        p[0] = (p[1],p[2])
+        p[0] = Global_List(p[2],p[1])
 
 def p_global_stmt(p):
     """
@@ -121,9 +129,9 @@ def p_global_stmt(p):
     """
     print("global_stmt")
     if len(p)==4:
-        p[0] = (p[1],p[2])
+        p[0] = Global_Stmt(g= p[2])
     else:
-        p[0] = (p[1],p[2],p[3],p[4])
+        p[0] = Global_Stmt(i=p[2],e=p[4])
 #def p_foo_stmt(p):
 #    """
 #    foo_stmt : expr OROR expr SEMI
@@ -135,28 +143,28 @@ def p_return_stmt(p):
     return_stmt : RETURN SEMI
     """
     print("return_stmt")
-    p[0] = p[1]
+    p[0] = String(p[1])
 
 def p_continue_stmt(p):
     """
     continue_stmt : CONTINUE SEMI
     """
     print("continue_stmt")
-    p[0] = p[1]
+    p[0] = String(p[1])
 
 def p_break_stmt(p):
     """
     break_stmt : BREAK SEMI
     """
     print("break_stmt")
-    p[0] = p[1]
+    p[0] = String(p[1])
 
 def p_switch_stmt(p):
     """
     switch_stmt : SWITCH expr semi_opt case_list end
     """
     print("switch_stmt")
-    p[0] = (p[1],p[2],p[4])
+    p[0] = Switch(p[2],p[4])
 
 def p_case_list(p):
     """
@@ -167,11 +175,14 @@ def p_case_list(p):
     """
     print("case_list")
     if len(p)==1:
-        p[0] = ""
-    elif len(p)==3:
-        p[0] = (p[1],p[2])
+        pass
+    elif len(p)==3: # Otherwise
+        p[0] = Case_List(e=p[2],o=True)
+        global start
+        start = p.lineno(1)
     else:
-        p[0] = (p[1],p[2],p[3],p[4])
+        p[0] = Case_List(e=p[2],s=p[4],c=p[5])
+        indent(p.lineno(2),p.lineno(5)-1-counter)
 
 def p_try_catch(p):
     """
@@ -190,7 +201,9 @@ def p_null_stmt(p):
                 | COMMA
     """
     print("null_stmt")
-    p[0] = None
+    global counter
+    counter +=1
+    pass
 
 def p_func_decl(p):
     """func_decl    : FUNCTION IDENTIFIER args_opt SEMI
@@ -246,6 +259,7 @@ def p_stmt_list_opt(p):
     print("stmt_list_opt")
     if len(p)==1:
         p[0] = ""     #This is wrong!!!
+        raise NotSupported("stmt_list_opt",p.lineno(0))
     else:
         p[0] = p[1]
 
@@ -304,7 +318,8 @@ def p_while_stmt(p):
     while_stmt : WHILE expr SEMI stmt_list end
     """
     print("while_stmt")
-    p[0] = (p[1],p[2],p[4])
+    indent(p.lineno(1)+1,p.lineno(5)-counter)
+    p[0] = While(p[2],p[4])
 
 def p_separator(p):
     """
@@ -312,7 +327,7 @@ def p_separator(p):
             | SEMI
     """
     print("separator")
-    p[0]=(p[1])
+    p[0]=p[1]
 
 def p_if_stmt(p):
     """
@@ -320,7 +335,8 @@ def p_if_stmt(p):
             | IF expr error stmt_list_opt elseif_stmt end
     """
     print("if_stmt")
-    p[0] = (p[1],p[2],p[4],p[5])
+    indent(p.lineno(1)+1,p.lineno(5)-counter)
+    p[0] = If(p[2],p[4],p[5])
 
 def p_elseif_stmt(p):
     """
@@ -330,11 +346,16 @@ def p_elseif_stmt(p):
     """
     print("elseif_stmt")
     if len(p)==1:
-        p[0] = None
+        p[0] = Node()
     elif len(p)==3:
-        p[0] = (p[1],p[2])
+        indent(p.lineno(1),p.lineno(2)-counter+1)
+        p[0] = Else(p[2])
+        print ("ELIF",p.lineno(1)+1,p.lineno(2)-counter)
+
     else:
-        p[0] = (p[1],p[2],p[4],p[6])
+        indent(p.lineno(1),p.lineno(4)-counter)
+        p[0] = ElseIf(p[2],p[4],p[5])
+        print ("ELSE",p.lineno(1)+1,p.lineno(4)-counter)
 
 def p_for_stmt(p):
     """
@@ -343,10 +364,10 @@ def p_for_stmt(p):
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
     print("for_stmt")
-    global indent
-    indent.append([p.lineno(1),p.lineno(7)-counter-1])
+    indent(p.lineno(1)+1,p.lineno(7)-counter)
     if len(p)==8:
-        if p[4].operator != ":":
+        print("whatis this",p[4])
+        if not isinstance(p[4],Range):
            raise MySystemError(p.lineno(4),p[4].operator)
         p[0] = For(p[2],p[4],p[6])
     elif len(p)==10:
@@ -380,8 +401,11 @@ def p_expr_end(p):
     end : END
     """
     print("expr_end")
-    global counter
+    global counter, start
     counter +=1
+    if start != 0:
+        indent(start,p.lineno(1)-counter)
+        start = 0
     p[0] = p[1]
 
 def p_expr_string(p):
@@ -389,14 +413,14 @@ def p_expr_string(p):
     string : STRING
     """
     print("expr_string")
-    p[0] = (p[1])
+    p[0] = String(p[1])
 
 def p_expr_colon(p):
     """
     colon : COLON
     """
     print("expr_colon")
-    p[0] = (p[1])
+    p[0] = String(p[1])
 
 def p_expr1(p):
     """expr1    : MINUS expr %prec UMINUS
@@ -404,7 +428,7 @@ def p_expr1(p):
                 | NOTEQUAL expr
     """
     print("expr1")
-    p[0] = (p[1]+p[2])
+    p[0] = Expr(p[1],"",p[2])
 
 def p_cellarray(p):
     """
@@ -433,7 +457,7 @@ def p_paren_expr(p):
     expr : LBRACKET expr RBRACKET
     """
     print("paren_expr")
-    p[0]=(p[1],p[2],p[3])
+    p[0]=Bracket_Expr(p[2])
 
 def p_field_expr(p):
     """
@@ -441,6 +465,7 @@ def p_field_expr(p):
     """
     print("field_expr")
     p[0] = (p[2],p[1])
+    #no idea what this is
 
 def p_transpose_expr(p):
 # p[2] contains the exact combination of plain and conjugate
@@ -449,7 +474,7 @@ def p_transpose_expr(p):
     expr : expr TRANSPOSE
     """
     print("transpose_expr")
-    p[0] = ('transpose',p[1])
+    p[0] = Transpose(p[1])
 
 def p_cellarrayref(p):
     """expr : expr LBRACE expr_list RBRACE
@@ -493,7 +518,13 @@ def p_expr2(p):
                 | expr OREQUALS expr
     """
     print("expr2")
-    p[0]=Expr(p[1],p[2],p[3])
+    print("check here!!!",p[2])
+    if len(p)==6:
+        p[0] = Range(p[1],p[3],p[5])
+    elif p[2]==":":
+        p[0] = Range(p[1],p[3])
+    else:
+        p[0]=Expr(p[1],p[2],p[3])
 # The algorithm, which decides if an
 # expression F(X)
 # is arrayref or funcall, is implemented in
@@ -521,7 +552,7 @@ def myparser(input,debug=0):
     yacc.yacc()
     try:
         output = yacc.parse(input,lexer=mylexer,tracking=True,debug=debug)
-        return output,indent
+        return output,indentlist
     except Lexer.UnknownCharacterError as e:
         return Node("An Invalid character '%s' has been found on line '%s'"%e.args)
     except MySystemError as e:

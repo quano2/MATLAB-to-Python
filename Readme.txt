@@ -7,10 +7,11 @@ Below is some information about the translator in its current state:
 MAJOR CHANGES - In the structure of the translator, testing needed.
 
 ADDED:
-- Node file
-- Codegen file
-- Now translates for loops (range function only)
-- Indentation can now be done for all looping functions
+- More commands (see support list)
+- Improved for loop handling
+- Parser improvements (string storage and similar)
+- Lexer improvements (reading strings and similar)
+- Spreadsheet added to show parse terms dealt with and testing status
 
 GRAMMAR TERMS REMOVED (NOT FULL LIST):
 - Lambda_args
@@ -19,6 +20,7 @@ GRAMMAR TERMS REMOVED (NOT FULL LIST):
 PROBLEMS NOTICED:
 - Left and Right divide
 - Array left and right division
+- Newlines in strings can't be read in probably
 
 NOTES:
 - Dotdivequals and Dotmulequals have been removed not sure what they do
@@ -30,8 +32,9 @@ NOTES:
 TO DO LIST:
 - Check tokens for excess
 - Fix string lexer
-- Add other looping functions
 - Testing
+- Clean up error messages, some are getting pass to command line
+- Add comments
 
 CURRENT STATUS:
 - Lexer will recognise most tokens
@@ -40,7 +43,12 @@ CURRENT STATUS:
 
 FULL SUPPORT LIST:
 - Simple expressions
-- For loops
+- for loops (range function only no iterations yet!)
+- if/else if/else loops
+- switch
+- brackets
+- true, false, continue, break, return
+- while
 
 DOES NOT SUPPORT: (support may be added at a later date)
 - Cell arrays
