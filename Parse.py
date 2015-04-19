@@ -35,7 +35,10 @@ indentlist = []
 
 def indent(start,end):
     global indentlist
-    indentlist.append([start,end])
+    if start>end:
+        indentlist.append([start-counter+1,end])
+    else:
+        indentlist.append([start,end])
 
 def p_top(p):
     """
@@ -191,9 +194,13 @@ def p_try_catch(p):
     """
     print("try_catch")
     if len(p)==4:
-        p[0] = (p[1],p[2],p[3])
+        p[0] = Try_Catch(p[2])
+        #indent(p.lineno(1)+1,p.lineno(3)+1-counter)
     else:
-        p[0] = (p[1],p[2],p[3],p[4])
+        p[0] = Try_Catch(p[2],p[4])
+        #indent(p.lineno(1)+1,p.lineno(3)-counter)
+        #indent(p.lineno(3)+1,p.lineno(5)-counter)
+        print ("is this larger?",p.lineno(3)+1,p.lineno(5)-counter, counter)
 
 def p_null_stmt(p):
     """
@@ -202,7 +209,7 @@ def p_null_stmt(p):
     """
     print("null_stmt")
     global counter
-    counter +=1
+    #counter +=1
     pass
 
 def p_func_decl(p):
@@ -348,12 +355,12 @@ def p_elseif_stmt(p):
     if len(p)==1:
         p[0] = Node()
     elif len(p)==3:
-        indent(p.lineno(1),p.lineno(2)-counter+1)
+        indent(p.lineno(1)+1,p.lineno(2)-counter+1)
         p[0] = Else(p[2])
         print ("ELIF",p.lineno(1)+1,p.lineno(2)-counter)
 
     else:
-        indent(p.lineno(1),p.lineno(4)-counter)
+        indent(p.lineno(1)+1,p.lineno(4)-counter)
         p[0] = ElseIf(p[2],p[4],p[5])
         print ("ELSE",p.lineno(1)+1,p.lineno(4)-counter)
 
@@ -364,7 +371,12 @@ def p_for_stmt(p):
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
     print("for_stmt")
+    #if (p.lineno(1)+1>p.lineno(7)-counter):
+    #    indent(p.lineno(1)-counter+2,p.lineno(7)-counter)
+    #else:
+    #    indent(p.lineno(1)+1,p.lineno(7)-counter)
     indent(p.lineno(1)+1,p.lineno(7)-counter)
+    print("\t\tHERE",p.lineno(1),counter,"from", p.lineno(1)-counter+1,"till", p.lineno(7)-counter)
     if len(p)==8:
         print("whatis this",p[4])
         if not isinstance(p[4],Range):
@@ -394,7 +406,11 @@ def p_expr(p):
             | expr1
     """
     print("expr")
-    p[0] = p[1]
+    if not isinstance(p[1],Node):
+        p[0] = Identifier(p[1])
+        print ("IS this bob???",p[0].print())
+    else:
+        p[0] = p[1]
 
 def p_expr_end(p):
     """
@@ -518,7 +534,6 @@ def p_expr2(p):
                 | expr OREQUALS expr
     """
     print("expr2")
-    print("check here!!!",p[2])
     if len(p)==6:
         p[0] = Range(p[1],p[3],p[5])
     elif p[2]==":":

@@ -1,0 +1,12 @@
+Talk about how indentations were done:
+	-In the parser
+	-In the lexer (hard)
+	-In the code generation pretty much impossible
+	-A mixture worked best:
+		~Store the lines where the for loops begins and ends
+		~hard to for ones which don't have end from grammar
+			+told end statments to add indents
+	-No switch statments in python so made my own!
+	-matlab can do p = 'hello'+6 mine cant
+	-hard to deal with 4:2:0
+		~used arange and will ignore any after 3rd number of 1:2:3:4:...:n

@@ -6,12 +6,12 @@ Below is some information about the translator in its current state:
 
 MAJOR CHANGES - In the structure of the translator, testing needed.
 
+MAJOR PROBLEMS - Indentation can no handle loops after loops, fix needed.
+
 ADDED:
-- More commands (see support list)
-- Improved for loop handling
-- Parser improvements (string storage and similar)
-- Lexer improvements (reading strings and similar)
-- Spreadsheet added to show parse terms dealt with and testing status
+- Added try and catch
+- Small changes
+- Indentation handling changes
 
 GRAMMAR TERMS REMOVED (NOT FULL LIST):
 - Lambda_args
@@ -21,6 +21,7 @@ PROBLEMS NOTICED:
 - Left and Right divide
 - Array left and right division
 - Newlines in strings can't be read in probably
+- Indentation
 
 NOTES:
 - Dotdivequals and Dotmulequals have been removed not sure what they do
@@ -35,6 +36,7 @@ TO DO LIST:
 - Testing
 - Clean up error messages, some are getting pass to command line
 - Add comments
+- Indentation
 
 CURRENT STATUS:
 - Lexer will recognise most tokens
@@ -49,6 +51,7 @@ FULL SUPPORT LIST:
 - brackets
 - true, false, continue, break, return
 - while
+- try catch statements
 
 DOES NOT SUPPORT: (support may be added at a later date)
 - Cell arrays

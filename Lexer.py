@@ -94,7 +94,6 @@ def new():
     t_RBRACE        = r'\}'
     t_SEMI          = r'\;'
     t_COLON         = r'\:'
-    t_OR            = r'\|'
     t_OREQUALS      = r'\|='
     t_OROR          = r'\|\|'
     t_DOT           = r'\.'
@@ -103,6 +102,10 @@ def new():
     t_DOTMUL        = r"\.\*"
     t_EXP           = r"\^"
     t_NOT           = r"\~"
+
+    def t_OR(t):
+        r"\|"
+        return t
 
     def t_NUMBER(t):
         r"(0x[0-9A-Fa-f]+)|((\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?[ij]?)"

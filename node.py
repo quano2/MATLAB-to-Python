@@ -34,6 +34,9 @@ class String(Node):
     def print(self):
         return self.string
 
+class Identifier(String):
+    pass
+
 class Transpose(Node):
     type="TRANSPOSE"
     def __init__(self,e):
@@ -74,10 +77,10 @@ class Bracket_Expr(Node):
 class Stmt_List(Node):
     type = "STMT_LIST"
     def __init__(self,e1,e2):
-        self.expr1 = e1
-        self.expr2 = e2
+        self.expr1 = printVar(e1)
+        self.expr2 = printVar(e2)
     def print(self):
-        return self.expr1.print()+"\n"+self.expr2.print()
+        return self.expr1+"\n"+self.expr2
 
 class Global_List(Node):
     type = "GLOBAL_LIST"
@@ -101,6 +104,21 @@ class Global_Stmt(Node):
             return "global "+self.ident+"="+self.expr.print()
         else :
             return "global "+self.glist.print()
+
+class Try_Catch(Node):
+    def __init__(self,s1,s2=""):
+        self.stmtlist1 = printVar(s1)
+        self.stmtlist2 = printVar(s2)
+        if s2 != "":            #to make it return ":" after exception
+            self.stmtlist2 = self.stmtlist2.split("\n")
+            self.ex = self.stmtlist2[0]
+            self.stmtlist2 = "\n".join(self.stmtlist2[1:])
+    def print(self):
+        if self.stmtlist2 == "":
+            return "try:\n"+self.stmtlist1
+        else:
+            return "try:\n"+self.stmtlist1+"\nexcept %s:\n"%self.ex+self.stmtlist2
+
 
 class Loop(Node):
     pass
