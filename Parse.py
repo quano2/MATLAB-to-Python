@@ -57,10 +57,13 @@ def p_top(p):
         p[0] = p[1]
     elif len(p)==1:
         p[0] = Node("")         #enables empty top
+
+    elif len(p) == 5:
+        raise  NotSupported("",p.lineno(1))
     elif len(p)==6:
         indent(p.lineno(2)+1,p.lineno(4))
         p[2].addStmt(p[3])
-        p[0] = p[2]
+        p[0] = Top(p[1],p[2])
     elif len(p)==4:
         raise NotSupported("Short function dec",p.lineno(1))
 

@@ -18,6 +18,14 @@ class Node:
     def print(self):
         return self.msg
 
+class Top(Node):
+    def __init__(self,t,f):
+        self.top = printVar(t)
+        self.func = printVar(f)
+
+    def print(self):
+        return self.top + "\n" + self.func
+
 class Number(Node):
     type = "NUMBER"
     def __init__(self,n):
