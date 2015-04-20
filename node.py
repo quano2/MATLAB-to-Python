@@ -157,11 +157,12 @@ class For(Loop):
     type = "FOR"
     def __init__(self,i,e,s):
         self.item = i
-        self.expr = e
+        e.operator = ","
+        self.expr = printVar(e)
+        #print("here is expr ",self.expr, "type",type(e),e.func,e.args)
         self.stmt = s
-        self.expr.operator = ","
     def print(self):
-        return "for %s in %s:"%(self.item,self.expr.print())+'\n'+self.stmt.print()
+        return "for %s in %s:"%(self.item,self.expr)+'\n'+self.stmt.print()
 
 class If(Loop):
     type = "IF"

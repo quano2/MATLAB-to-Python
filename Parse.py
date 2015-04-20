@@ -380,8 +380,8 @@ def p_for_stmt(p):
     print("for_stmt")
     if len(p)==8:
         indent(p.lineno(1)+1,p.lineno(7)-1)
-        if not isinstance(p[4],Range):
-           raise MySystemError(p.lineno(4)+1,p[4].operator)
+        #if not isinstance(p[4],Range):
+        #   raise MySystemError(p.lineno(4)+1,p[4].operator)
         p[0] = For(p[2],p[4],p[6])
     elif len(p)==10:
         raise NotSupported("Unknown",p.lineno(4))
