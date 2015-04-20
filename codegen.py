@@ -1,12 +1,12 @@
 from Parse import myparser
 
-def convert(code):
-    if isinstance(code,str):
-        return code
-    newcode = '\n'.join(code)
-    return newcode
 
 def decode(list):
+    '''
+    Creates list of lines to be indented.
+    :param list:
+    :return:
+    '''
     indents = []
     for i in list:
         for x in range(i[0],i[1]+1):
@@ -14,17 +14,61 @@ def decode(list):
     return sorted(indents)
 
 def indent(code,ilist):
+    '''
+    Indents code at the line numbers from ilist.
+    :param code:
+    :param ilist:
+    :return:
+    '''
     temp = code.split('\n')
     for i in ilist:
         i-=1
         temp[i] = "\t"+temp[i]
     return "\n".join(temp)
 
+def addLines(code,list):
+    '''
+    Adds line to code at line numbers from list, used to ensure indentation is correct.
+    :param code:
+    :param list:
+    :return:
+    '''
+    newcode = code.split("\n")
+    list = sorted(list)
+    for i in list:
+        print ("add line at",i-1,"len",len(newcode))
+        newcode.insert(i-1,"")
+    return "\n".join(newcode)
+
+def removeEmpty(code):
+    '''
+    Will remove empty lines from code.
+    :param code:
+    :return:
+    '''
+    newcode = code.split("\n")
+    counter = 0
+    for i in range(len(newcode)):
+        i -= counter
+        if newcode[i].strip() == "":
+            newcode.pop(i)
+            counter += 1
+    return "\n".join(newcode)
 
 def translate(input):
-    output,ind = myparser(input)
+    '''
+    This is the translator which combines all of the other classes and methods to translate the input.
+    :param input:
+    :return:
+    '''
+    input = addSemi(input)
+    output,ind,empty,coms = myparser(input)
+    output = output.print()
+    output = addLines(output,empty)
     de = decode(ind)
     output = indent(output,de)
+    output = addComments(output,coms)
+    output = removeEmpty(output)
     return output
 
 def addSemi(input):
@@ -34,64 +78,56 @@ def addSemi(input):
     :param input:
     :return:
     '''
+    input = input.split('\n')
     while "" in input:
         input.remove("")   #removes empty lines
     for lineno in range(len(input)):
         input[lineno] = input[lineno].replace("end","end\n")
+        input[lineno] = input[lineno].replace("%",";%")
         input[lineno] = input[lineno].strip()
         if input[lineno][-1]!= ';':
             input[lineno]+=";"
-
     return "".join(input).replace(";",";\n")
 
+def addComments(code,comments):
+    code = code.split("\n")
+    for i in range(len(comments)):
+        print ("here",type(code))
+        code.insert(comments[i][0]-1,"#"+comments[i][1])
+    return "\n".join(code)
+
 if __name__=="__main__":
-    code = """try
-for x=0:90
-    c = 9
-    p=0
-    for i = 0:10
-        p=0
-        for i = 0:10
-            q= 0
-            u=7
-        end
-        q=i
-        p=8
-        l=0
-        for i=0:10
-            p=9
-            u=9
-        end
+    code = """m = 0;
+ir = 0;
+il = 0;
+for j=1:10
+    if(124>m)
+        m=er(j,j);
+        ir = j;
     end
-    asd =l
-    p=9
 end
-catch ME
-for i = 0:10
-    o=p
-    o=8
-end
-for i = 0:10
-    i=8
-end
-for i =0:10
-    p=0
-end
-end"""
 
-    code = code.split('\n')
-    code = addSemi(code)
+for j=1:15
+    if(156>m)
+        m=el(j,j);
+                il = j;
+    end
+end
 
-    output,ind = myparser(code,debug=0)
+"""
 
+    code  = addSemi(code)
+    print(code)
+    output,ind,empty,comments = myparser(code,debug=0)
+    print(code)
     output = output.print()
-    print (output)
-
+    output = addLines(output,empty)
     de = decode(ind)
-    print (de)
     output = indent(output,de)
-    print ("output is\n",output)
+    output = addComments(output,comments)
+    output = removeEmpty(output)
 
+    #output = translate(code)
     file = open("newfile.py","w")
     file.write(output)
     file.close()

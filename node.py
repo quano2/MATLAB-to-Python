@@ -1,3 +1,4 @@
+from functions import *
 
 def printVar(var):
     '''
@@ -17,15 +18,12 @@ class Node:
     def print(self):
         return self.msg
 
-#Not yet used!
-########################
 class Number(Node):
     type = "NUMBER"
     def __init__(self,n):
         self.num = n
     def print(self):
         return self.num
-##########################
 
 class String(Node):
     type = "STRING"
@@ -35,7 +33,14 @@ class String(Node):
         return self.string
 
 class Identifier(String):
-    pass
+    type = "IDENTIFER"
+    def __init__(self,i,check=False):
+        self.ident = i
+        if check:
+            self.ident = convertOp(i)
+    def print(self):
+        return self.ident
+
 
 class Transpose(Node):
     type="TRANSPOSE"
@@ -62,7 +67,7 @@ class Expr(Node):
     type = "EXPR"
     def __init__(self,e1,op,e2):
         self.expr1 = printVar(e1)
-        self.operator = op
+        self.operator = convertOp(op)
         self.expr2 = printVar(e2)
     def print(self):
         return self.expr1+self.operator+self.expr2
@@ -119,6 +124,23 @@ class Try_Catch(Node):
         else:
             return "try:\n"+self.stmtlist1+"\nexcept %s:\n"%self.ex+self.stmtlist2
 
+class Function(Node):
+    def __init__(self,e1,a):
+        self.args = printVar(a)
+        self.func = convertFunc(printVar(e1))
+    def print(self):
+        return self.func+"(%s)"%self.args
+
+class Function_Dec(Node):
+    def __init__(self,r,n,a,sl=""):
+        self.ret = "\treturn "+printVar(r)
+        self.name = printVar(n)
+        self.args = printVar(a)
+        self.stmtlist = printVar(sl)
+    def addStmt(self,sl):
+        self.stmtlist = printVar(sl)+"\n"
+    def print(self):
+        return "def %s%s:\n"%(self.name,self.args)+self.stmtlist+self.ret
 
 class Loop(Node):
     pass
@@ -136,11 +158,14 @@ class For(Loop):
 class If(Loop):
     type = "IF"
     def __init__(self,e,s,ef):
-        self.expr = e
-        self.stmt = s
-        self.elseif = ef
+        self.expr = printVar(e)
+        self.stmt = printVar(s)
+        self.elseif = printVar(ef)
     def print(self):
-        return "if "+self.expr.print()+":\n"+self.stmt.print()+"\n"+self.elseif.print()
+        if self.elseif == "":
+            return "if "+self.expr+ ":\n" + self.stmt
+        else:
+            return "if "+self.expr+":\n"+self.stmt+"\n"+self.elseif
 
 class ElseIf(Loop):
     type = "ELSE_IF"
@@ -161,7 +186,7 @@ class Else(Loop):
 class Switch(Loop):
     type = "SWITCH"
     def __init__(self,e,cl):
-        self.expr = e
+        self.expr = printVar(e)
         self.caselist = cl
     def print(self):
         return self.caselist.print(self.expr)
@@ -193,11 +218,3 @@ class While(Loop):
         self.stmt = s
     def print(self):
         return "while %s:\n"%self.expr+self.stmt.print()
-
-
-
-if __name__ == "__main__":
-    ex = Expr("5",":","9")
-    print(ex.print)
-    t = For("i",ex)
-    print (t.print())

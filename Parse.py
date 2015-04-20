@@ -29,30 +29,40 @@ precedence = (
 global indentlist
 global counter
 global start
+global emptylines
+emptylines = []
 start = 0
-counter =0
-indentlist = []
+indentlist = []     #stores when to add empty line and indents
 
 def indent(start,end):
+    '''
+    Simple methods adds to global indent list.
+    :param start:
+    :param end:
+    :return:
+    '''
     global indentlist
-    if start>end:
-        indentlist.append([start-counter+1,end])
-    else:
-        indentlist.append([start,end])
+    indentlist.append([start,end])
 
 def p_top(p):
     """
     top :
         | stmt_list
-        | top func_decl stmt_list_opt
-        | top func_decl end semi_opt
-        | top func_decl stmt_list end semi_opt
+        | top func_dec stmt_list_opt
+        | top func_dec end semi_opt
+        | top func_dec stmt_list end semi_opt
     """
     print("top")
     if len(p)==2:
         p[0] = p[1]
-    else:
-        print ("Different")
+    elif len(p)==1:
+        p[0] = Node("")         #enables empty top
+    elif len(p)==6:
+        indent(p.lineno(2)+1,p.lineno(4))
+        p[2].addStmt(p[3])
+        p[0] = p[2]
+    elif len(p)==4:
+        raise NotSupported("Short function dec",p.lineno(1))
 
 def p_semi_opt(p):
     """
@@ -91,8 +101,8 @@ def p_arg1(p):
             | GLOBAL
     """
     print("arg1")
-    p[0] = p[1]
-        #not sure what this is here for??
+    raise NotSupported("Arg1",p.lineno(1))
+    #This has not been used.
 
 
 def p_args(p):
@@ -104,15 +114,15 @@ def p_args(p):
     if len(p)==2:
         p[0]=p[1]
     else:
-        p[0]=p[1],p[2]
-        #not sure what this is here for??
+        raise NotSupported("Args",p.lineno(1))
+        #This has not been used yet
 
 def p_command(p):
     """
     command : IDENTIFIER args SEMI
     """
     print("command")
-    #not sure what this is here for??
+    #This has not been used yet
     raise NotSupported("Command",p.lineno(1))
 
 def p_global_list(p):
@@ -135,11 +145,6 @@ def p_global_stmt(p):
         p[0] = Global_Stmt(g= p[2])
     else:
         p[0] = Global_Stmt(i=p[2],e=p[4])
-#def p_foo_stmt(p):
-#    """
-#    foo_stmt : expr OROR expr SEMI
-#    """
-
 
 def p_return_stmt(p):
     """
@@ -167,6 +172,8 @@ def p_switch_stmt(p):
     switch_stmt : SWITCH expr semi_opt case_list end
     """
     print("switch_stmt")
+    global emptylines
+    emptylines.append(p.lineno(1))
     p[0] = Switch(p[2],p[4])
 
 def p_case_list(p):
@@ -182,10 +189,10 @@ def p_case_list(p):
     elif len(p)==3: # Otherwise
         p[0] = Case_List(e=p[2],o=True)
         global start
-        start = p.lineno(1)
+        start = p.lineno(1)+1
     else:
         p[0] = Case_List(e=p[2],s=p[4],c=p[5])
-        indent(p.lineno(2),p.lineno(5)-1-counter)
+        indent(p.lineno(1)+1,p.lineno(5)-1)  # check!!!
 
 def p_try_catch(p):
     """
@@ -195,12 +202,11 @@ def p_try_catch(p):
     print("try_catch")
     if len(p)==4:
         p[0] = Try_Catch(p[2])
-        #indent(p.lineno(1)+1,p.lineno(3)+1-counter)
+        indent(p.lineno(1)+1,p.lineno(3)-1)
     else:
         p[0] = Try_Catch(p[2],p[4])
-        #indent(p.lineno(1)+1,p.lineno(3)-counter)
-        #indent(p.lineno(3)+1,p.lineno(5)-counter)
-        print ("is this larger?",p.lineno(3)+1,p.lineno(5)-counter, counter)
+        indent(p.lineno(1)+1,p.lineno(3)-1)
+        indent(p.lineno(3)+1,p.lineno(5)-1)
 
 def p_null_stmt(p):
     """
@@ -208,19 +214,17 @@ def p_null_stmt(p):
                 | COMMA
     """
     print("null_stmt")
-    global counter
-    #counter +=1
     pass
 
-def p_func_decl(p):
-    """func_decl    : FUNCTION IDENTIFIER args_opt SEMI
+def p_func_dec(p):
+    """func_dec    : FUNCTION IDENTIFIER args_opt SEMI
                     | FUNCTION ret EQUALS IDENTIFIER args_opt SEMI
     """
-    print("func_decl")
+    print("func_dec")
     if len(p)==5:
-        p[0] = (p[1],p[2],p[3])
+        p[0] = Function_Dec("",p[2],p[3])
     else:
-        p[0] = (p[1],p[2],p[3],p[4],p[5])
+        p[0] = Function_Dec(p[2],p[4],p[5])
 
 def p_args_opt(p):
     """
@@ -230,11 +234,11 @@ def p_args_opt(p):
     """
     print("args_opt")
     if len(p)==1:
-        p[0] = ''  #empty for now
+        p[0] = Node("")  #empty for now
     elif len(p)==2:
-        p[0] = (p[1],"",p[2])
+        p[0] = Bracket_Expr("")
     else:
-        p[0] = (p[1],p[2],p[3])
+        p[0] = Bracket_Expr(p[2])
 
 #def p_arg_list(p):
 #    """
@@ -242,7 +246,7 @@ def p_args_opt(p):
 #                | arg_list COMMA IDENTIFIER
 #    """
 #    print("arg_list")
-#Not sure if needed or not, not used so unreachable
+#Unused grammar
 
 def p_ret(p):
     """
@@ -252,11 +256,11 @@ def p_ret(p):
     """
     print("ret")
     if len(p)==2:
-        p[0] = p[1]
+        p[0] = Identifier(p[1])
     elif len(p)==3:
-        p[0] = (p[1],"",p[2])
+        p[0] = Bracket_Expr("")
     else:
-        p[0] = (p[1],p[2],p[3])
+        p[0] = Bracket_Expr(p[2])
 
 def p_stmt_list_opt(p):
     """
@@ -281,7 +285,7 @@ def p_stmt_list(p):
     else:
         if p[2]==None:  #ignore ; between lines, might be wrong
             p[0]=p[1]
-        elif p[1]==None or p[1]=="ERROR": #might be wrong, but removes Nones and ERROR
+        elif p[1]==None or p[1]=="ERROR": #removes Nones and ERROR
             p[0] = p[2]
         else:
             p[0] = Stmt_List(p[1],p[2])
@@ -291,8 +295,8 @@ def p_concat_list(p):
     concat_list : expr_list SEMI expr_list
                 | concat_list SEMI expr_list
     """
-    print("concat_list + FIX")
-    p[0]= (p[1],p[3])    #no idea
+    print("concat_list")
+    raise NotSupported("Concat lists",p.lineno(1))
 
 def p_expr_list(p):
     """
@@ -300,7 +304,10 @@ def p_expr_list(p):
                 | exprs COMMA
     """
     print("expr_list")
-    p[0] = p[1]
+    if len(p)==1:
+        p[0] = p[1]
+    else:
+        p[0] = p[1]   #CHECK THIS
 
 def p_exprs(p):
     """
@@ -309,9 +316,9 @@ def p_exprs(p):
     """
     print("exprs")
     if len(p)==2:
-        p[0]=(p[1])
+        p[0]=p[1]
     else:
-        p[0] = (p[1],p[2],p[3]) #guess
+        p[0] = Expr(p[1],p[2],p[3])
 
 def p_expr_stmt(p):
     """
@@ -325,7 +332,7 @@ def p_while_stmt(p):
     while_stmt : WHILE expr SEMI stmt_list end
     """
     print("while_stmt")
-    indent(p.lineno(1)+1,p.lineno(5)-counter)
+    indent(p.lineno(1)+1,p.lineno(5)-1)
     p[0] = While(p[2],p[4])
 
 def p_separator(p):
@@ -342,7 +349,7 @@ def p_if_stmt(p):
             | IF expr error stmt_list_opt elseif_stmt end
     """
     print("if_stmt")
-    indent(p.lineno(1)+1,p.lineno(5)-counter)
+    indent(p.lineno(1)+1,p.lineno(5)-1)
     p[0] = If(p[2],p[4],p[5])
 
 def p_elseif_stmt(p):
@@ -355,14 +362,11 @@ def p_elseif_stmt(p):
     if len(p)==1:
         p[0] = Node()
     elif len(p)==3:
-        indent(p.lineno(1)+1,p.lineno(2)-counter+1)
+        indent(p.lineno(1)+1,p.lineno(2)-1)
         p[0] = Else(p[2])
-        print ("ELIF",p.lineno(1)+1,p.lineno(2)-counter)
-
     else:
-        indent(p.lineno(1)+1,p.lineno(4)-counter)
+        indent(p.lineno(1)+1,p.lineno(4)-1)
         p[0] = ElseIf(p[2],p[4],p[5])
-        print ("ELSE",p.lineno(1)+1,p.lineno(4)-counter)
 
 def p_for_stmt(p):
     """
@@ -371,16 +375,10 @@ def p_for_stmt(p):
                 | FOR matrix EQUALS expr SEMI stmt_list end
     """
     print("for_stmt")
-    #if (p.lineno(1)+1>p.lineno(7)-counter):
-    #    indent(p.lineno(1)-counter+2,p.lineno(7)-counter)
-    #else:
-    #    indent(p.lineno(1)+1,p.lineno(7)-counter)
-    indent(p.lineno(1)+1,p.lineno(7)-counter)
-    print("\t\tHERE",p.lineno(1),counter,"from", p.lineno(1)-counter+1,"till", p.lineno(7)-counter)
     if len(p)==8:
-        print("whatis this",p[4])
+        indent(p.lineno(1)+1,p.lineno(7)-1)
         if not isinstance(p[4],Range):
-           raise MySystemError(p.lineno(4),p[4].operator)
+           raise MySystemError(p.lineno(4)+1,p[4].operator)
         p[0] = For(p[2],p[4],p[6])
     elif len(p)==10:
         raise NotSupported("Unknown",p.lineno(4))
@@ -407,8 +405,7 @@ def p_expr(p):
     """
     print("expr")
     if not isinstance(p[1],Node):
-        p[0] = Identifier(p[1])
-        print ("IS this bob???",p[0].print())
+        p[0] = Identifier(p[1],check=True)
     else:
         p[0] = p[1]
 
@@ -417,10 +414,10 @@ def p_expr_end(p):
     end : END
     """
     print("expr_end")
-    global counter, start
-    counter +=1
+    global start, emptylines
+    emptylines.append(p.lineno(1))
     if start != 0:
-        indent(start,p.lineno(1)-counter)
+        indent(start,p.lineno(1)-1)  #-1 check this
         start = 0
     p[0] = p[1]
 
@@ -455,7 +452,7 @@ def p_cellarray(p):
     """
     print("cellarray")
     raise NotSupported("Cell array",p.lineno(1))
-    # Cell arrays will not be supported.
+    # Cell arrays are not supported currently
 
 def p_matrix(p):
     """matrix   : LBRACKET RBRACKET
@@ -484,8 +481,6 @@ def p_field_expr(p):
     #no idea what this is
 
 def p_transpose_expr(p):
-# p[2] contains the exact combination of plain and conjugate
-# transpose operators, such as "'.''.''''".
     """
     expr : expr TRANSPOSE
     """
@@ -505,8 +500,10 @@ def p_funcall_expr(p):
             | expr LBRACKET RBRACKET
     """
     print("funcall_expr")
-    #LOOK THIS UP IN GRAMMAR!!!!
-    raise NotSupported("funcall_expr",p.lineno(4))
+    if len(p)==5:
+        p[0] = Function(p[1],p[3])
+    else:
+        p[0] = Function(p[1],"")
 
 def p_expr2(p):
     """expr2    : expr AND expr
@@ -540,20 +537,6 @@ def p_expr2(p):
         p[0] = Range(p[1],p[3])
     else:
         p[0]=Expr(p[1],p[2],p[3])
-# The algorithm, which decides if an
-# expression F(X)
-# is arrayref or funcall, is implemented in
-# resolve.py, except the following lines up
-# to XXX. These lines handle the case where
-# an undefined array is updated:
-# >>> clear a
-# >>> a[1:10]=123
-# Though legal in matlab, these lines
-# confuse the algorithm, which thinks that
-# the undefined variable is a function name.
-# To prevent the confusion, we mark these
-# nodes arrayref as early as during the parse
-# phase.
 
 def p_error(p):
     print ('unable to parse %s' %p )
@@ -567,26 +550,12 @@ def myparser(input,debug=0):
     yacc.yacc()
     try:
         output = yacc.parse(input,lexer=mylexer,tracking=True,debug=debug)
-        return output,indentlist
+        return output,indentlist,emptylines,mylexer.comments
     except Lexer.UnknownCharacterError as e:
         return Node("An Invalid character '%s' has been found on line '%s'"%e.args)
     except MySystemError as e:
-        return Node("Syntax error on line '%s' at '%s'"%e.args)
+        return Node("Syntax error on line '%s' at '%s'"%e.args),[],[],[]
     except NotSupported as e:
-        return Node ("Parser detected a '%s' on line '%s' which is not supported."%e.args)
+        return Node ("Parser detected a '%s' on line '%s' which is not supported."%e.args),[],[],[]
     except UnknownError:
-        return Node ("Parser has come across a syntax error, please check for ';' at line ends.")
-
-
-if __name__ == "__main__":
-    nlex = Lexer.new()
-    yacc.yacc()
-
-    data =  """i = 5 + 5;
-"""
-
-    #output = yacc.parse(data,lexer=nlex,debug=1)
-    output = myparser(data)
-    print ()
-    print (output)
-    #print (Lexer.comments)
+        return Node ("Parser has come across a syntax error, please check for ';' at line ends."),[],[],[]

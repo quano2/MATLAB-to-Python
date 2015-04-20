@@ -112,7 +112,7 @@ def new():
         return t
 
     def t_STRING(t):
-        r"\'[a-zA-Z][a-zA-z0-9]*\'"
+        r"\'[a-zA-Z][ a-zA-z0-9]*\'"
         return t
 
     def t_TRANSPOSE(t):
@@ -121,7 +121,6 @@ def new():
 
     def t_IDENTIFIER(t):
         r"\.?[a-zA-Z_]+[a-zA-Z0-9_]*"
-        print (t.value)
         if t.value[0] == ".":
             t.type = "FIELD"
             return t
@@ -138,15 +137,15 @@ def new():
 
     def t_COMMA(t):
         r","
-        print (t.lexer.lineno)
         return t
 
     def t_comment(t):
         r"%.*"
         temp = list(t.value)
         temp.pop(0)
+        temp.pop(-1)
         t.value = "".join(temp)     #removes % sign from comment
-        comments.append((t.value,lexer.lineno))
+        comments.append((lexer.lineno,t.value))
 
     def t_error(t):
         raise UnknownCharacterError(t.value[0],t.lineno)
@@ -158,24 +157,19 @@ def new():
     def t_newline(t):
         r"\n"
         t.lexer.lineno += 1
-        t.type= "SEMI"
-        t.value=";"
-        #return t    commented out so it will work with code over lines.
 
     lexer = lex.lex()
     lexer.comments = comments
     return lexer
 
-if __name__ == '__main__':
+def test(input):
     lexer = new()
-    data =  '''p= 'hello'.';
-    t'
-    t.'
-            '''
-
-    lexer.input(data)
-
+    lexer.input(input)
+    output = []
     for tok in lexer:
-        print(tok)
-    if lexer.comments:
-        print(lexer.comments)
+        output.append(tok)
+    comments = lexer.comments
+    return output, comments
+
+if __name__=="__main__":
+    print(test('hellowork %this is a test'))
